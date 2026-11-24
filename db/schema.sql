@@ -1,0 +1,1 @@
+-- Schema database VERITAS (akan diisi di Fase 4)
