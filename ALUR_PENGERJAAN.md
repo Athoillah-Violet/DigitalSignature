@@ -24,10 +24,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 3 — Layout Global & Beranda
+- **Fase aktif:** Fase 4 — Database
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** (belum dipilih: Supabase / Neon)
-- **Catatan singkat:** Fase 2 selesai, aset timbangan SVG (scale.svg & ScaleIllustration.tsx) dengan kontur kontras monokrom dan latar transparan siap diintegrasikan ke hero.
+- **Catatan singkat:** Fase 3 selesai, Layout Global (TopBar, Navbar, Footer) dan Beranda (Hero, HowItWorks, SecuritySection) sukses dibangun dan diuji.
 
 ---
 
@@ -64,17 +64,17 @@
   - [x] Latar benar-benar transparan
 
 ## FASE 3 — Layout Global & Beranda
-- [ ] `TopBar.tsx`: bar hitam, teks kecil kiri, titik hijau berkedip + "SISTEM AKTIF" kanan
-- [ ] `Navbar.tsx`: menu kiri, logo tengah, tombol hitam kanan; menu garis bawah pada item aktif; versi mobile (hamburger)
-- [ ] `Hero.tsx`: kata raksasa di belakang, timbangan melayang di tengah menimpa huruf, bayangan blur berdenyut, dua tombol kiri bawah, label + angka kanan bawah
-- [ ] `HowItWorks.tsx`: 4 langkah bernomor, animasi AOS bertahap (`data-aos-delay`)
-- [ ] Section Keamanan dengan kutipan serif light
-- [ ] `Footer.tsx`
-- [ ] Rakit semua di `app/page.tsx`
+- [x] `TopBar.tsx`: bar hitam, teks kecil kiri, titik hijau berkedip + "SISTEM AKTIF" kanan
+- [x] `Navbar.tsx`: menu kiri, logo tengah, tombol hitam kanan; menu garis bawah pada item aktif; versi mobile (hamburger)
+- [x] `Hero.tsx`: kata raksasa di belakang, timbangan melayang di tengah menimpa huruf, bayangan blur berdenyut, dua tombol kiri bawah, label + angka kanan bawah
+- [x] `HowItWorks.tsx`: 4 langkah bernomor, animasi AOS bertahap (`data-aos-delay`)
+- [x] Section Keamanan dengan kutipan serif light
+- [x] `Footer.tsx`
+- [x] Rakit semua di `app/page.tsx`
 - **Uji Fase:**
-  - [ ] Tampilan desktop mirip konsep (huruf di belakang, timbangan di depan)
-  - [ ] Tampilan HP (lebar 375px) tidak pecah
-  - [ ] Animasi berkedip, melayang, dan scroll berjalan
+  - [x] Tampilan desktop mirip konsep (huruf di belakang, timbangan di depan)
+  - [x] Tampilan HP (lebar 375px) tidak pecah
+  - [x] Animasi berkedip, melayang, dan scroll berjalan
 
 ## FASE 4 — Database
 - [ ] Pengguna menyiapkan database gratis (Supabase atau Neon) dan mengisi `DATABASE_URL` di `.env.local` *(butuh tindakan pengguna; tanyakan bila belum ada)*
@@ -173,6 +173,7 @@
 | 2026-11-25 | Fase 0 | Inisialisasi proyek Next.js 16, TypeScript, Tailwind CSS, struktur folder placeholder, pasang seluruh dependensi dan verifikasi build/dev | Build dan dev server berjalan sukses (HTTP 200) |
 | 2026-11-25 | Fase 1 | Fondasi desain: palet warna off-white, font Google (Cormorant, Inter, JetBrains Mono), utility class, keyframes (blink, float, pulse-soft), AosProvider, prefers-reduced-motion | Build dan dev test lolos, rendering HTML diverifikasi |
 | 2026-11-25 | Fase 2 | Aset timbangan keadilan minimalis monokrom (scale.svg & ScaleIllustration.tsx): rasio 3:4, latar transparan, kontur proteksi teks raksasa | SVG inline dan standalone siap, lolos uji render |
+| 2026-11-25 | Fase 3 | Layout global dan beranda: TopBar, Navbar responsif, Hero (timbangan melayang di atas kata raksasa), HowItWorks, SecuritySection, Footer | Seluruh komponen terintegrasi di page.tsx, lolos uji desktop & mobile |
 
 ---
 
