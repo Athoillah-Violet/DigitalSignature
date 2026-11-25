@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 4 — Database (lalu Fase 4B — Autentikasi Google)
+- **Fase aktif:** Fase 4B — Autentikasi Google (Supabase Auth)
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 3 selesai. Rencana direvisi: ditambah login Google (Fase 4B) dan Riwayat Dokumen (di Fase 7). Fase 6 kini mewajibkan login. README sudah diperbarui sesuai (bagian 6B).
+- **Catatan singkat:** Fase 4 selesai. Skema database, RLS, modul db.ts, dan koneksi Supabase terverifikasi. Siap konfigurasi autentikasi Google.
 
 ---
 
@@ -78,7 +78,7 @@
   - [x] Animasi berkedip, melayang, dan scroll berjalan
 
 ## FASE 4 — Database (Supabase)
-- [ ] Pengguna membuat proyek Supabase gratis, lalu mengisi `.env.local`: `DATABASE_URL` (connection string Postgres dari dasbor; pakai pooler bila tersedia), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` *(tindakan pengguna; tanyakan bila belum ada)*
+- [x] Pengguna membuat proyek Supabase gratis, lalu mengisi `.env.local`: `DATABASE_URL` (connection string Postgres dari dasbor; pakai pooler bila tersedia), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` *(tindakan pengguna; tanyakan bila belum ada)*
 - [x] Buat `db/schema.sql`: tabel `documents` sesuai README bagian 6 (termasuk `user_id uuid not null references auth.users(id)`, `signer_name`, `signer_email`), index pada `user_id`, dan tabel `signing_keys` bila dipakai
 - [x] Di `schema.sql`, aktifkan RLS: `alter table ... enable row level security` untuk `documents` dan `signing_keys`, **tanpa** policy publik
 - [x] Jalankan skema ke database (lewat SQL Editor Supabase atau skrip)
@@ -86,7 +86,7 @@
 - [x] Fungsi: `insertDocument`, `getDocumentById`, `listDocumentsByUser(userId)`, `revokeDocument(id, userId)` (hanya berhasil bila `user_id` cocok)
 - **Uji Fase:**
   - [x] Skrip uji kecil bisa insert lalu baca satu baris (gunakan `user_id` uji yang sah atau sementara tanpa FK, lalu catat caranya)
-  - [ ] Tabel tidak bisa dibaca lewat publishable key (RLS bekerja)
+  - [x] Tabel tidak bisa dibaca lewat publishable key (RLS bekerja)
   - [x] Baris uji dihapus setelahnya
 
 ## FASE 4B — Autentikasi Google (Supabase Auth)
@@ -199,10 +199,7 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- **Fase 4 (Tindakan Pengguna):** `DATABASE_URL` sudah terhubung dan skema database (`documents` & `signing_keys` dengan RLS) sudah sukses diaplikasikan ke Supabase. Namun, konfigurasi `.env.local` masih membutuhkan tindakan pengguna:
-  1. Ganti nama key Supabase URL menjadi `NEXT_PUBLIC_SUPABASE_URL` (saat ini tertulis di `NEXT_PUBLIC_BASE_URL`).
-  2. Kembalikan `NEXT_PUBLIC_BASE_URL=http://localhost:3000` (untuk base URL aplikasi lokal & link verifikasi QR).
-  3. Tambahkan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ambil anon public key `sb_publishable_...` atau `anon key` dari dasbor Supabase: *Project Settings -> Data API / API*).
+- (kosong)
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
@@ -213,6 +210,7 @@
 | 2026-11-25 | Fase 1 | Fondasi desain: palet warna off-white, font Google (Cormorant, Inter, JetBrains Mono), utility class, keyframes (blink, float, pulse-soft), AosProvider, prefers-reduced-motion | Build dan dev test lolos, rendering HTML diverifikasi |
 | 2026-11-25 | Fase 2 | Aset timbangan keadilan minimalis monokrom (scale.svg & ScaleIllustration.tsx): rasio 3:4, latar transparan, kontur proteksi teks raksasa | SVG inline dan standalone siap, lolos uji render |
 | 2026-11-25 | Fase 3 | Layout global dan beranda: TopBar, Navbar responsif, Hero (timbangan melayang di atas kata raksasa), HowItWorks, SecuritySection, Footer | Seluruh komponen terintegrasi di page.tsx, lolos uji desktop & mobile |
+| 2026-11-25 | Fase 4 | Database Supabase (PostgreSQL): skema documents & signing_keys, RLS aktif tanpa policy publik, lib/db.ts query berparameter | Uji koneksi, insert, read, revoke, dan pembatasan RLS via publishable key sukses lolos |
 
 ---
 
