@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 7 — Fitur Cek Keaslian
+- **Fase aktif:** Fase 8 — Keamanan & Hardening
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 6 selesai. Fitur penandatanganan PDF ber-QR code dengan identitas Google User dan tanda tangan digital RSA-2048 telah diimplementasikan dan diverifikasi.
+- **Catatan singkat:** Fase 7 selesai. Fitur Cek Keaslian (QR Scanner kamera, input ID manual, verifikasi integritas PDF byte-per-byte, ResultCard, halaman riwayat, dan pencabutan dokumen) berhasil diimplementasikan dan lolos uji end-to-end.
 
 ---
 
@@ -130,23 +130,23 @@
   - [x] Permintaan ke `/api/sign` tanpa login ditolak (401)
 
 ## FASE 7 — Fitur Cek Keaslian
-- [ ] `app/api/verify/route.ts`: terima ID + PDF → hitung hash → bandingkan dengan DB → verifikasi signature → cek status → kembalikan hasil (`ASLI`, `DIUBAH`, `TIDAK_DITEMUKAN`, `DICABUT`)
-- [ ] `app/api/document/[id]/route.ts`: info publik (nama, waktu, status), tanpa hash penuh bila tidak perlu
-- [ ] `QrScanner.tsx` dengan `html5-qrcode` (izin kamera, ambil ID dari URL hasil scan)
-- [ ] `app/verifikasi/page.tsx`: pilihan scan kamera atau input ID manual
-- [ ] `app/verifikasi/[id]/page.tsx`: tampilkan info penandatangan + form unggah PDF
-- [ ] `ResultCard.tsx`: tampilan hasil dengan animasi, ikon, warna (hijau/merah), rincian
-- [ ] Tampilkan catatan batasan (file harus identik)
-- [ ] `app/riwayat/page.tsx`: daftar dokumen milik pengguna (ID, nama file, tanggal, status), wajib login
-- [ ] `app/api/document/[id]/revoke/route.ts`: wajib login, hanya pemilik, periksa `Origin`; tombol "Cabut" dengan dialog konfirmasi di halaman riwayat
-- [ ] Pastikan halaman/endpoint verifikasi publik **tidak** menampilkan `signer_email`
+- [x] `app/api/verify/route.ts`: terima ID + PDF → hitung hash → bandingkan dengan DB → verifikasi signature → cek status → kembalikan hasil (`ASLI`, `DIUBAH`, `TIDAK_DITEMUKAN`, `DICABUT`)
+- [x] `app/api/document/[id]/route.ts`: info publik (nama, waktu, status), tanpa hash penuh bila tidak perlu
+- [x] `QrScanner.tsx` dengan `html5-qrcode` (izin kamera, ambil ID dari URL hasil scan)
+- [x] `app/verifikasi/page.tsx`: pilihan scan kamera atau input ID manual
+- [x] `app/verifikasi/[id]/page.tsx`: tampilkan info penandatangan + form unggah PDF
+- [x] `ResultCard.tsx`: tampilan hasil dengan animasi, ikon, warna (hijau/merah), rincian
+- [x] Tampilkan catatan batasan (file harus identik)
+- [x] `app/riwayat/page.tsx`: daftar dokumen milik pengguna (ID, nama file, tanggal, status), wajib login
+- [x] `app/api/document/[id]/revoke/route.ts`: wajib login, hanya pemilik, periksa `Origin`; tombol "Cabut" dengan dialog konfirmasi di halaman riwayat
+- [x] Pastikan halaman/endpoint verifikasi publik **tidak** menampilkan `signer_email`
 - **Uji Fase:**
-  - [ ] PDF hasil fase 6 → **ASLI**
-  - [ ] PDF yang sama tetapi diedit/disimpan ulang → **DIUBAH**
-  - [ ] ID acak → **TIDAK_DITEMUKAN**
-  - [ ] Status diubah `revoked` di DB → **DICABUT**
-  - [ ] Pencabutan lewat tombol di riwayat → verifikasi menampilkan **DICABUT**
-  - [ ] Pengguna B tidak bisa melihat atau mencabut dokumen pengguna A
+  - [x] PDF hasil fase 6 → **ASLI**
+  - [x] PDF yang sama tetapi diedit/disimpan ulang → **DIUBAH**
+  - [x] ID acak → **TIDAK_DITEMUKAN**
+  - [x] Status diubah `revoked` di DB → **DICABUT**
+  - [x] Pencabutan lewat tombol di riwayat → verifikasi menampilkan **DICABUT**
+  - [x] Pengguna B tidak bisa melihat atau mencabut dokumen pengguna A
 
 ## FASE 8 — Keamanan & Hardening
 - [ ] Rate limiting sederhana untuk `/api/sign` dan `/api/verify` (berbasis IP, in-memory atau layanan gratis)
@@ -214,6 +214,7 @@
 | 2026-11-25 | Fase 4B | Autentikasi Google via Supabase Auth: @supabase/ssr, proxy.ts session refresher & route protection, auth callback aman, halaman masuk, tombol sign out, navbar terintegrasi akun | Uji rute publik vs terproteksi (/tanda-tangan -> /masuk, /verifikasi publik) dan proteksi open-redirect lolos |
 | 2026-11-25 | Fase 5 | Kriptografi RSA-2048 / SHA-256: generate-keys.mjs, lib/crypto.ts (hash, sign, verify, safeEqual timing-safe), formatPemKey otomatis | Kunci .env.local berhasil diverifikasi dengan unit test tanda tangan digital |
 | 2026-11-25 | Fase 6 | Fitur Buat Tanda Tangan: lib/validate.ts, lib/pdf.ts stamping QR & metadata, api/sign terproteksi auth & CSRF, UploadBox.tsx, app/tanda-tangan/page.tsx | Pengujian end-to-end penandatanganan dan penolakan 401 unauthenticated lolos verifikasi |
+| 2026-11-25 | Fase 7 | Fitur Cek Keaslian: api/verify, api/document/[id], api/document/[id]/revoke, api/documents/my, QrScanner.tsx, ResultCard.tsx, app/verifikasi, app/riwayat | Uji dokumen asli (ASLI), dokumen dimodifikasi (DIUBAH), ID acak (TIDAK_DITEMUKAN), dan pencabutan sah/non-pemilik (DICABUT) lolos 100% |
 
 ---
 

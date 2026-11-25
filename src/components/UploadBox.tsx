@@ -7,9 +7,10 @@ interface UploadBoxProps {
   onFileSelect: (file: File | null) => void;
   selectedFile: File | null;
   error?: string | null;
+  onClear?: () => void;
 }
 
-export default function UploadBox({ onFileSelect, selectedFile, error }: UploadBoxProps) {
+export default function UploadBox({ onFileSelect, selectedFile, error, onClear }: UploadBoxProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
