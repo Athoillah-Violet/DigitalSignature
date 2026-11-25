@@ -1,18 +1,40 @@
 import crypto from 'node:crypto';
 
 /**
- * Normalisasi format kunci PEM dari environment variable (mengubah \n string menjadi karakter newline asli)
+ * Normalisasi format kunci PEM dari environment variable.
+ * Menangani \n yang ter-escape, tanda kutip luar, serta memastikan header & footer PEM standar tetap utuh.
  */
-export function formatPemKey(key: string | undefined): string {
+export function formatPemKey(key: string | undefined, type?: 'PRIVATE' | 'PUBLIC'): string {
   if (!key) return '';
   let formatted = key.trim();
+
+  // Bersihkan tanda kutip pembungkus
   if (
     (formatted.startsWith('"') && formatted.endsWith('"')) ||
     (formatted.startsWith("'") && formatted.endsWith("'"))
   ) {
     formatted = formatted.slice(1, -1);
   }
-  return formatted.replace(/\\n/g, '\n');
+
+  // Ubah literal \n menjadi newline asli
+  formatted = formatted.replace(/\\n/g, '\n');
+
+  // Pastikan header & footer PEM tersedia secara valid
+  if (type) {
+    const header = `-----BEGIN ${type} KEY-----`;
+    const footer = `-----END ${type} KEY-----`;
+
+    if (!formatted.includes(header)) {
+      if (formatted.startsWith('n')) formatted = formatted.substring(1);
+      formatted = `${header}\n${formatted}`;
+    }
+    if (!formatted.includes(footer)) {
+      if (formatted.endsWith('n')) formatted = formatted.substring(0, formatted.length - 1);
+      formatted = `${formatted}\n${footer}\n`;
+    }
+  }
+
+  return formatted;
 }
 
 /**
@@ -23,7 +45,7 @@ export function getPrivateKey(): string {
   if (!raw) {
     throw new Error('SIGNING_PRIVATE_KEY is not defined in environment variables');
   }
-  return formatPemKey(raw);
+  return formatPemKey(raw, 'PRIVATE');
 }
 
 /**
@@ -34,7 +56,7 @@ export function getPublicKey(): string {
   if (!raw) {
     throw new Error('SIGNING_PUBLIC_KEY is not defined in environment variables');
   }
-  return formatPemKey(raw);
+  return formatPemKey(raw, 'PUBLIC');
 }
 
 /**

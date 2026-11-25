@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 5 — Kriptografi
+- **Fase aktif:** Fase 6 — Fitur Buat Tanda Tangan
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 4B selesai. Autentikasi Google via Supabase Auth terintegrasi penuh (@supabase/ssr, proxy.ts, callback, halaman masuk, navbar auth, dan proteksi rute).
+- **Catatan singkat:** Fase 5 selesai. Modul kriptografi (sha256Hex, signHash, verifySignature, safeEqual) terverifikasi menggunakan pasangan kunci RSA-2048 di .env.local.
 
 ---
 
@@ -110,7 +110,7 @@
 
 ## FASE 5 — Kriptografi
 - [x] Buat `scripts/generate-keys.mjs` yang menghasilkan pasangan kunci (RSA-2048 atau ECDSA P-256) dan mencetak PEM siap tempel ke `.env.local`
-- [ ] Pengguna menjalankan skrip dan mengisi `SIGNING_PRIVATE_KEY`, `SIGNING_PUBLIC_KEY`, `SIGNING_KEY_ID` *(tindakan pengguna)*
+- [x] Pengguna menjalankan skrip dan mengisi `SIGNING_PRIVATE_KEY`, `SIGNING_PUBLIC_KEY`, `SIGNING_KEY_ID` *(tindakan pengguna)*
 - [x] `lib/crypto.ts`: `sha256Hex(buffer)`, `signHash(hashHex)`, `verifySignature(hashHex, signature)`, `safeEqual(a, b)` (pakai `timingSafeEqual`)
 - [x] Muat kunci dari env dengan penanganan `\n`
 - **Uji Fase:**
@@ -199,11 +199,7 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- **Fase 5 (Tindakan Pengguna):** Skrip generator kunci `scripts/generate-keys.mjs` dan modul `src/lib/crypto.ts` telah selesai dibuat dan diverifikasi dengan unit test. Pengguna perlu menjalankan skrip generator kunci di terminal:
-  ```bash
-  node scripts/generate-keys.mjs
-  ```
-  lalu salin 3 baris output (`SIGNING_KEY_ID`, `SIGNING_PRIVATE_KEY`, dan `SIGNING_PUBLIC_KEY`) ke file `.env.local`.
+- (kosong)
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
@@ -216,6 +212,7 @@
 | 2026-11-25 | Fase 3 | Layout global dan beranda: TopBar, Navbar responsif, Hero (timbangan melayang di atas kata raksasa), HowItWorks, SecuritySection, Footer | Seluruh komponen terintegrasi di page.tsx, lolos uji desktop & mobile |
 | 2026-11-25 | Fase 4 | Database Supabase (PostgreSQL): skema documents & signing_keys, RLS aktif tanpa policy publik, lib/db.ts query berparameter | Uji koneksi, insert, read, revoke, dan pembatasan RLS via publishable key sukses lolos |
 | 2026-11-25 | Fase 4B | Autentikasi Google via Supabase Auth: @supabase/ssr, proxy.ts session refresher & route protection, auth callback aman, halaman masuk, tombol sign out, navbar terintegrasi akun | Uji rute publik vs terproteksi (/tanda-tangan -> /masuk, /verifikasi publik) dan proteksi open-redirect lolos |
+| 2026-11-25 | Fase 5 | Kriptografi RSA-2048 / SHA-256: generate-keys.mjs, lib/crypto.ts (hash, sign, verify, safeEqual timing-safe), formatPemKey otomatis | Kunci .env.local berhasil diverifikasi dengan unit test tanda tangan digital |
 
 ---
 
