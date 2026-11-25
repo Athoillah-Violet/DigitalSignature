@@ -24,10 +24,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 1 — Fondasi Desain
+- **Fase aktif:** Fase 2 — Aset Timbangan
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** (belum dipilih: Supabase / Neon)
-- **Catatan singkat:** Fase 0 selesai, proyek Next.js berhasil diinisialisasi dan diuji.
+- **Catatan singkat:** Fase 1 selesai, tema, font (Cormorant Garamond, Inter, JetBrains Mono), animasi dasar, AosProvider, dan utility class siap digunakan.
 
 ---
 
@@ -44,16 +44,16 @@
   - [x] `npm run build` sukses
 
 ## FASE 1 — Fondasi Desain (tema, font, animasi dasar)
-- [ ] Atur palet warna di `tailwind.config` / CSS variables sesuai README bagian 3
-- [ ] Muat font via `next/font`: Cormorant Garamond (300, 400, italic), Inter/Archivo (500–900), JetBrains Mono
-- [ ] Buat class utilitas: label kecil kapital berjarak lebar, judul raksasa, tombol hitam, tombol outline
-- [ ] Buat keyframes: `blink`, `float`, `pulse-soft`
-- [ ] Buat `AosProvider.tsx` (init AOS: durasi 800, `once: true`) dan pasang di `layout.tsx`
-- [ ] Tambahkan dukungan `prefers-reduced-motion`
-- [ ] Atur `layout.tsx`: metadata, bahasa `id`, latar off-white
+- [x] Atur palet warna di `tailwind.config` / CSS variables sesuai README bagian 3
+- [x] Muat font via `next/font`: Cormorant Garamond (300, 400, italic), Inter/Archivo (500–900), JetBrains Mono
+- [x] Buat class utilitas: label kecil kapital berjarak lebar, judul raksasa, tombol hitam, tombol outline
+- [x] Buat keyframes: `blink`, `float`, `pulse-soft`
+- [x] Buat `AosProvider.tsx` (init AOS: durasi 800, `once: true`) dan pasang di `layout.tsx`
+- [x] Tambahkan dukungan `prefers-reduced-motion`
+- [x] Atur `layout.tsx`: metadata, bahasa `id`, latar off-white
 - **Uji Fase:**
-  - [ ] Font tampil benar, warna sesuai
-  - [ ] Elemen uji dengan `data-aos` beranimasi saat di-scroll
+  - [x] Font tampil benar, warna sesuai
+  - [x] Elemen uji dengan `data-aos` beranimasi saat di-scroll
 
 ## FASE 2 — Aset Timbangan
 - [ ] Buat `public/assets/scale.svg`: timbangan keadilan minimalis monokrom, **latar transparan**, rasio sekitar 3:4
@@ -171,6 +171,7 @@
 | Tanggal | Fase | Ringkasan | Catatan |
 |---|---|---|---|
 | 2026-11-25 | Fase 0 | Inisialisasi proyek Next.js 16, TypeScript, Tailwind CSS, struktur folder placeholder, pasang seluruh dependensi dan verifikasi build/dev | Build dan dev server berjalan sukses (HTTP 200) |
+| 2026-11-25 | Fase 1 | Fondasi desain: palet warna off-white, font Google (Cormorant, Inter, JetBrains Mono), utility class, keyframes (blink, float, pulse-soft), AosProvider, prefers-reduced-motion | Build dan dev test lolos, rendering HTML diverifikasi |
 
 ---
 
