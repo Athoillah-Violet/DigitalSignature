@@ -18,6 +18,7 @@ import {
   ExternalLink,
   Loader2,
   FileCheck,
+  ArrowLeft,
 } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -164,7 +165,17 @@ export default function TandaTanganPage() {
       <TopBar />
       <Navbar />
 
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-8 py-12 sm:py-16">
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-8 py-10 sm:py-14">
+        {/* Tombol Navigasi Kembali */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-[#555555] hover:text-[#111111] transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Beranda
+          </Link>
+        </div>
+
         {/* Header Halaman */}
         <div className="mb-10 text-center sm:text-left border-b border-[#D6D5CF] pb-6">
           <span className="label-mono text-[#555555]">MODUL // PEMBUATAN TANDA TANGAN</span>

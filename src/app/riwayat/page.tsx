@@ -12,6 +12,7 @@ import {
   Loader2,
   ExternalLink,
   Plus,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface DocumentItem {
@@ -114,8 +115,18 @@ export default function RiwayatPage() {
   };
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-6 sm:px-8">
+    <main className="min-h-screen pt-24 pb-20 px-6 sm:px-8">
       <div className="max-w-4xl mx-auto">
+        {/* Tombol Navigasi Kembali */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-[#555555] hover:text-[#111111] transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Beranda
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-[#D6D5CF] gap-4" data-aos="fade-up">
           <div>

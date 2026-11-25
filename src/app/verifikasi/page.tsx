@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { QrCode, Search, FileCheck2, AlertCircle } from 'lucide-react';
+import { QrCode, Search, FileCheck2, AlertCircle, ArrowLeft } from 'lucide-react';
 import QrScanner from '@/components/QrScanner';
 
 export default function VerifikasiPage() {
@@ -28,8 +29,18 @@ export default function VerifikasiPage() {
   };
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-6 sm:px-8">
+    <main className="min-h-screen pt-24 pb-20 px-6 sm:px-8">
       <div className="max-w-xl mx-auto flex flex-col items-center">
+        {/* Tombol Navigasi Kembali */}
+        <div className="w-full mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-[#555555] hover:text-[#111111] transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Beranda
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8" data-aos="fade-up">
           <span className="label-mono mb-2 inline-block">Verifikasi Dokumen</span>
