@@ -256,11 +256,29 @@ Login selain Google (email/password, GitHub), peran admin, penyimpanan file, mul
 
 ---
 
-## 11. Definisi Selesai (Definition of Done)
-- Pengguna bisa unggah PDF, lalu mengunduh PDF ber-QR.
-- Scan QR membuka halaman verifikasi yang benar.
-- PDF asli → **ASLI**; PDF yang diubah satu karakter pun → **TIDAK ASLI**.
-- Tampilan sesuai bagian 3, animasi berjalan, responsif di HP.
-- Hanya pengguna login yang bisa menandatangani; verifikasi tetap bisa dilakukan siapa saja.
-- Pengguna melihat riwayat dokumennya sendiri dan bisa mencabutnya; tidak bisa menyentuh milik orang lain.
-- Tidak ada rahasia di repo; build produksi sukses; terdeploy.
+## 12. Cara Menjalankan & Deployment
+
+### Menjalankan Secara Lokal
+1. Salin berkas env:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Isi nilai kredensial di `.env.local` (Supabase URL, Key, Database URL, dan pasangan kunci RSA dari `node scripts/generate-keys.mjs`).
+3. Jalankan aplikasi pengembangan:
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000) di browser.
+
+### Panduan Deployment (Vercel)
+1. Push kode ke repositori GitHub:
+   ```bash
+   git push origin main
+   ```
+2. Hubungkan repositori di dasbor [Vercel](https://vercel.com) dengan Framework Preset **Next.js**.
+3. Di pengaturan Vercel (Environment Variables), masukkan semua variabel lingkungan dari `.env.example`.
+4. Di dasbor Supabase (**Authentication -> URL Configuration**):
+   - Masukkan domain Vercel ke **Site URL** (misal `https://digitalsignature-alma6.vercel.app`).
+   - Tambahkan `https://digitalsignature-alma6.vercel.app/auth/callback` ke **Redirect URLs**.
+5. Repositori resmi: [https://github.com/Athoillah-Violet/DigitalSignature](https://github.com/Athoillah-Violet/DigitalSignature).
+

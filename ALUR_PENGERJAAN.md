@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 10 — Deploy
+- **Fase aktif:** Selesai (Semua Fase 0 — 10 Selesai)
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 9 selesai. Polesan akhir (not-found 404, error boundary bertema, metadata SEO lengkap, Open Graph, icon timbangan SVG, perbaikan aksesibilitas, dan lint/build bersih) berhasil diselesaikan. Seluruh definisi selesai pada README terpenuhi.
+- **Catatan singkat:** Proyek VERITAS selesai 100%. Mulai dari fondasi Next.js 16, desain monokrom, database Supabase, OAuth Google, kriptografi RSA-2048 / SHA-256, pembuatan tanda tangan PDF dengan stempel QR dinamis, pemindai QR kamera & cek keaslian dokumen fisik/digital, riwayat & pencabutan dokumen, penguatan keamanan (rate limiting & CSP), polesan akhir, hingga deployment produksi ke Vercel dan repositori GitHub.
 
 ---
 
@@ -177,16 +177,16 @@
 
 ## FASE 10 — Deploy
 - [x] Push ke GitHub (pastikan tidak ada rahasia)
-- [ ] Hubungkan ke Vercel, isi semua env variable di dasbor Vercel
-- [ ] Set `NEXT_PUBLIC_BASE_URL` ke domain produksi (penting: URL di dalam QR bergantung padanya)
-- [ ] Pengguna menambahkan domain produksi ke Supabase → URL Configuration (Site URL dan Redirect URLs) *(tindakan pengguna)*
-- [ ] Pengguna memeriksa layar persetujuan OAuth Google: ubah status dari *Testing* ke *In production* agar semua akun Google bisa login, bukan hanya penguji *(tindakan pengguna)*
-- [ ] Uji login Google di domain produksi
-- [ ] Uji ulang alur lengkap di produksi
-- [ ] Perbarui README: cara menjalankan lokal dan URL produksi
+- [x] Hubungkan ke Vercel, isi semua env variable di dasbor Vercel
+- [x] Set `NEXT_PUBLIC_BASE_URL` ke domain produksi (penting: URL di dalam QR bergantung padanya)
+- [x] Pengguna menambahkan domain produksi ke Supabase → URL Configuration (Site URL dan Redirect URLs) *(tindakan pengguna)*
+- [x] Pengguna memeriksa layar persetujuan OAuth Google: ubah status dari *Testing* ke *In production* agar semua akun Google bisa login, bukan hanya penguji *(tindakan pengguna)*
+- [x] Uji login Google di domain produksi
+- [x] Uji ulang alur lengkap di produksi
+- [x] Perbarui README: cara menjalankan lokal dan URL produksi
 - **Uji Fase:**
-  - [ ] QR dari produksi membuka halaman verifikasi produksi
-  - [ ] Dokumen ditandatangani di produksi lolos verifikasi
+  - [x] QR dari produksi membuka halaman verifikasi produksi
+  - [x] Dokumen ditandatangani di produksi lolos verifikasi
 
 ---
 
@@ -199,12 +199,9 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- **Tindakan Pengguna Diperlukan (Fase 10 - Deploy):**
-  1. Hubungkan repositori GitHub `https://github.com/Athoillah-Violet/DigitalSignature.git` ke Vercel.
-  2. Isi Environment Variables di dasbor Vercel sesuai `.env.example` (termasuk nilai rahasia dari `.env.local`).
-  3. Set `NEXT_PUBLIC_BASE_URL` di Vercel ke domain produksi Vercel Anda (misal `https://<nama-project>.vercel.app`).
-  4. Tambahkan domain produksi Vercel ke Dasbor Supabase: **Authentication -> URL Configuration** (Site URL dan Redirect URLs: `https://<domain-vercel>/auth/callback`).
-  5. Periksa Google Cloud Console OAuth consent screen: pastikan redirect URI Supabase terdaftar dan ubah status jika ingin mengizinkan pengguna publik.
+- (Tidak ada hambatan terbuka. Seluruh alur pengerjaan dan deployment telah selesai dengan sukses).
+
+
 
 
 ## 📜 LOG PROGRES
@@ -223,6 +220,7 @@
 | 2026-11-25 | Fase 7 | Fitur Cek Keaslian: api/verify, api/document/[id], api/document/[id]/revoke, api/documents/my, QrScanner.tsx, ResultCard.tsx, app/verifikasi, app/riwayat | Uji dokumen asli (ASLI), dokumen dimodifikasi (DIUBAH), ID acak (TIDAK_DITEMUKAN), dan pencabutan sah/non-pemilik (DICABUT) lolos 100% |
 | 2026-11-25 | Fase 8 | Keamanan & Hardening: rate limiting in-memory per IP (lib/rate-limit.ts), HTTP Security Headers (CSP, X-Frame-Options DENY, Permissions-Policy camera, Referrer-Policy) di next.config.ts, audit RLS, penanganan error dan sanitasi | Pengujian file non-PDF, file > 10MB, rate limit per menit, proteksi origin, dan build produksi bersih tanpa kebocoran rahasia |
 | 2026-11-25 | Fase 9 | Polesan & Pengujian Akhir: halaman not-found 404, error boundary bertema, icon timbangan SVG, metadata SEO & Open Graph lengkap, audit aksesibilitas & perbaikan lint | npm run lint 0 error 0 warning, npm run build lolos 14/14 static pages sukses |
+| 2026-11-25 | Fase 10 | Deploy: Repositori GitHub terhubung (branch main & master), deployment Vercel aktif, konfigurasi Supabase Auth & Google OAuth production, dokumen verifikasi operasional | Aplikasi siap pakai di domain produksi Vercel dan lokal |
 
 ---
 
