@@ -128,7 +128,7 @@ export default function RiwayatPage() {
         </div>
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-[#D6D5CF] gap-4" data-aos="fade-up">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-[#D6D5CF] gap-4">
           <div>
             <span className="label-mono mb-2 inline-block">Arsip Dokumen Anda</span>
             <h1 className="text-3xl sm:text-4xl font-serif-light text-[#111111]">
@@ -166,7 +166,7 @@ export default function RiwayatPage() {
               </button>
             </div>
           ) : documents.length === 0 ? (
-            <div className="py-16 text-center border border-dashed border-[#D6D5CF] p-8 rounded-sm bg-white" data-aos="fade-up">
+            <div className="py-16 text-center border border-dashed border-[#D6D5CF] p-8 rounded-sm bg-white">
               <FileText className="w-12 h-12 stroke-1 text-[#555555]/50 mx-auto mb-3" />
               <h3 className="font-serif-light text-xl text-[#111111]">Belum Ada Dokumen</h3>
               <p className="text-xs text-[#555555] mt-1 max-w-sm mx-auto">
@@ -180,7 +180,7 @@ export default function RiwayatPage() {
               </Link>
             </div>
           ) : (
-            <div className="space-y-4" data-aos="fade-up">
+            <div className="space-y-4">
               {documents.map((doc) => {
                 const isValid = doc.status === 'valid';
                 const formattedDate = new Date(doc.created_at).toLocaleString('id-ID', {
