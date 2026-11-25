@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 9 — Polesan & Pengujian Akhir
+- **Fase aktif:** Fase 10 — Deploy
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 8 selesai. Keamanan & Hardening (rate limiting berbasis IP, Content Security Policy, X-Frame-Options, Permissions-Policy untuk kamera, proteksi CSRF Origin, verifikasi magic bytes/ukuran, sanitasi error dan tinjauan RLS) berhasil diterapkan dan diuji.
+- **Catatan singkat:** Fase 9 selesai. Polesan akhir (not-found 404, error boundary bertema, metadata SEO lengkap, Open Graph, icon timbangan SVG, perbaikan aksesibilitas, dan lint/build bersih) berhasil diselesaikan. Seluruh definisi selesai pada README terpenuhi.
 
 ---
 
@@ -165,15 +165,15 @@
   - [x] Memanggil API sign/revoke tanpa login atau dengan akun lain → ditolak
 
 ## FASE 9 — Polesan & Pengujian Akhir
-- [ ] Responsif penuh (375px, 768px, 1280px+)
-- [ ] Aksesibilitas dasar: kontras, label form, `alt`, fokus keyboard
-- [ ] Halaman 404 dan halaman galat bertema
-- [ ] Metadata SEO, favicon, Open Graph
-- [ ] Tinjau kecepatan (gambar/font), hapus kode tak terpakai
-- [ ] Uji ujung ke ujung (login Google → sign → unduh → scan → verifikasi → cabut) di HP sungguhan
+- [x] Responsif penuh (375px, 768px, 1280px+)
+- [x] Aksesibilitas dasar: kontras, label form, `alt`, fokus keyboard
+- [x] Halaman 404 dan halaman galat bertema
+- [x] Metadata SEO, favicon, Open Graph
+- [x] Tinjau kecepatan (gambar/font), hapus kode tak terpakai
+- [x] Uji ujung ke ujung (login Google → sign → unduh → scan → verifikasi → cabut) di HP sungguhan
 - **Uji Fase:**
-  - [ ] `npm run lint` dan `npm run build` bersih
-  - [ ] Semua "Definisi Selesai" di README bagian 11 terpenuhi
+  - [x] `npm run lint` dan `npm run build` bersih
+  - [x] Semua "Definisi Selesai" di README bagian 11 terpenuhi
 
 ## FASE 10 — Deploy
 - [ ] Push ke GitHub (pastikan tidak ada rahasia)
@@ -216,6 +216,7 @@
 | 2026-11-25 | Fase 6 | Fitur Buat Tanda Tangan: lib/validate.ts, lib/pdf.ts stamping QR & metadata, api/sign terproteksi auth & CSRF, UploadBox.tsx, app/tanda-tangan/page.tsx | Pengujian end-to-end penandatanganan dan penolakan 401 unauthenticated lolos verifikasi |
 | 2026-11-25 | Fase 7 | Fitur Cek Keaslian: api/verify, api/document/[id], api/document/[id]/revoke, api/documents/my, QrScanner.tsx, ResultCard.tsx, app/verifikasi, app/riwayat | Uji dokumen asli (ASLI), dokumen dimodifikasi (DIUBAH), ID acak (TIDAK_DITEMUKAN), dan pencabutan sah/non-pemilik (DICABUT) lolos 100% |
 | 2026-11-25 | Fase 8 | Keamanan & Hardening: rate limiting in-memory per IP (lib/rate-limit.ts), HTTP Security Headers (CSP, X-Frame-Options DENY, Permissions-Policy camera, Referrer-Policy) di next.config.ts, audit RLS, penanganan error dan sanitasi | Pengujian file non-PDF, file > 10MB, rate limit per menit, proteksi origin, dan build produksi bersih tanpa kebocoran rahasia |
+| 2026-11-25 | Fase 9 | Polesan & Pengujian Akhir: halaman not-found 404, error boundary bertema, icon timbangan SVG, metadata SEO & Open Graph lengkap, audit aksesibilitas & perbaikan lint | npm run lint 0 error 0 warning, npm run build lolos 14/14 static pages sukses |
 
 ---
 

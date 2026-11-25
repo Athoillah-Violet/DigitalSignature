@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="4" fill="#111111"/>
+  <!-- Timbangan Veritas Minimalis -->
+  <path d="M16 6V26" stroke="#E9E8E3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M8 11L24 11" stroke="#E9E8E3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M11 26H21" stroke="#E9E8E3" stroke-width="2" stroke-linecap="round"/>
+  <!-- Piringan Kiri -->
+  <path d="M8 11L5 17H11L8 11Z" fill="#E9E8E3" stroke="#E9E8E3" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Piringan Kanan -->
+  <path d="M24 11L21 17H27L24 11Z" fill="#E9E8E3" stroke="#E9E8E3" stroke-width="1" stroke-linejoin="round"/>
+</svg>

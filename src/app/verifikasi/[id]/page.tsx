@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, ShieldAlert, UploadCloud, Info } from 'lucide-react';
+import { ArrowLeft, Loader2, UploadCloud, Info } from 'lucide-react';
 import UploadBox from '@/components/UploadBox';
 import ResultCard from '@/components/ResultCard';
 import { VerificationResponse } from '@/app/api/verify/route';
@@ -53,7 +53,7 @@ export default function DetailVerifikasiPage({ params }: PageProps) {
             });
           }
         }
-      } catch (err) {
+      } catch {
         if (!isMounted) return;
         setVerificationResult({
           status: 'TIDAK_DITEMUKAN',

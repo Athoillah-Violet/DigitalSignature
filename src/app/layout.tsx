@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AosProvider from "@/components/AosProvider";
@@ -25,9 +25,41 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#E9E8E3",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "VERITAS — Web Tanda Tangan Digital",
-  description: "Aplikasi tanda tangan digital PDF dan verifikasi keaslian dokumen via QR code.",
+  title: {
+    default: "VERITAS — Integritas & Tanda Tangan Digital PDF",
+    template: "%s | VERITAS",
+  },
+  description:
+    "Aplikasi web tanda tangan digital dokumen PDF resmi berbasis kriptografi RSA-2048 / SHA-256 dan verifikasi keaslian instan via pemindai QR code.",
+  keywords: [
+    "tanda tangan digital",
+    "digital signature",
+    "verifikasi pdf",
+    "qr code",
+    "rsa 2048",
+    "keamanan dokumen",
+    "veritas",
+  ],
+  authors: [{ name: "VERITAS Team" }],
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  openGraph: {
+    title: "VERITAS — Integritas & Tanda Tangan Digital PDF",
+    description:
+      "Tanda tangani dokumen PDF secara digital dan verifikasi keaslian dokumen via QR code dengan jaminan kriptografi RSA.",
+    type: "website",
+    locale: "id_ID",
+    siteName: "VERITAS",
+  },
 };
 
 export default function RootLayout({

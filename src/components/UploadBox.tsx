@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, DragEvent, ChangeEvent } from 'react';
-import { Upload, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface UploadBoxProps {
   onFileSelect: (file: File | null) => void;
@@ -86,14 +86,18 @@ export default function UploadBox({ onFileSelect, selectedFile, error, onClear }
                 {selectedFile.name}
               </p>
               <p className="font-mono text-xs text-[#555555] mt-1">
-                {formatFileSize(selectedFile.size)} // SIAP DITANDATANGANI
+                {formatFileSize(selectedFile.size)} &bull; SIAP DITANDATANGANI
               </p>
             </div>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onFileSelect(null);
+                if (onClear) {
+                  onClear();
+                } else {
+                  onFileSelect(null);
+                }
                 if (fileInputRef.current) fileInputRef.current.value = '';
               }}
               className="mt-2 text-[11px] font-mono uppercase tracking-wider text-[#A63D3D] hover:underline"

@@ -4,7 +4,7 @@ export default function TopBar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between text-[11px] font-mono tracking-[0.2em] uppercase select-none">
         <div className="flex items-center gap-3">
           <span className="text-[#888888] font-semibold">VERITAS</span>
-          <span className="hidden sm:inline text-[#444444]">//</span>
+          <span className="hidden sm:inline text-[#444444]">{'//'}</span>
           <span className="hidden sm:inline text-[#AAAAAA]">PROTOKOL TANDA TANGAN & KEASLIAN DIGITAL</span>
         </div>
 

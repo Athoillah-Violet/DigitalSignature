@@ -53,7 +53,32 @@ export default function RiwayatPage() {
   };
 
   useEffect(() => {
-    fetchDocuments();
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/documents/my');
+        if (!res.ok) {
+          throw new Error('Gagal mengambil daftar dokumen');
+        }
+        const data = await res.json();
+        if (!ignore) {
+          setDocuments(data.documents || []);
+        }
+      } catch (err: unknown) {
+        if (!ignore) {
+          const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+          setError(msg);
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      }
+    }
+    load();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handleConfirmRevoke = async () => {
