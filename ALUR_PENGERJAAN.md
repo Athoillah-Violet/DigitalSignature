@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 6 — Fitur Buat Tanda Tangan
+- **Fase aktif:** Fase 7 — Fitur Cek Keaslian
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 5 selesai. Modul kriptografi (sha256Hex, signHash, verifySignature, safeEqual) terverifikasi menggunakan pasangan kunci RSA-2048 di .env.local.
+- **Catatan singkat:** Fase 6 selesai. Fitur penandatanganan PDF ber-QR code dengan identitas Google User dan tanda tangan digital RSA-2048 telah diimplementasikan dan diverifikasi.
 
 ---
 
@@ -118,16 +118,16 @@
   - [x] Tes: signature valid lolos, signature/hash yang diubah gagal
 
 ## FASE 6 — Fitur Buat Tanda Tangan
-- [ ] `lib/validate.ts`: cek tipe, magic bytes `%PDF-`, ukuran ≤ 10 MB, skema `zod` untuk input form (nama penandatangan tidak diinput, diambil dari akun)
-- [ ] `lib/pdf.ts`: buat QR (isi `BASE_URL/verifikasi/<ID>`), tempel di bawah halaman (pilih: semua halaman atau halaman terakhir; **default: halaman terakhir**), tambahkan teks kecil nama, tanggal, ID
-- [ ] `app/api/sign/route.ts`: **wajib login (401 bila tidak)** → periksa `Origin` → validasi → buat ID → tempel QR → hash PDF final → tanda tangani → simpan DB (dengan `user_id`, nama dan email dari akun) → kembalikan PDF
-- [ ] `app/tanda-tangan/page.tsx` + `UploadBox.tsx`: drag & drop, nama penandatangan tampil dari akun (hanya baca), tombol proses, indikator loading, unduh hasil, tampilkan ID dan peringatan "jangan ubah/simpan ulang file"
-- [ ] Penanganan galat yang ramah (file salah, terlalu besar, server gagal)
+- [x] `lib/validate.ts`: cek tipe, magic bytes `%PDF-`, ukuran ≤ 10 MB, skema `zod` untuk input form (nama penandatangan tidak diinput, diambil dari akun)
+- [x] `lib/pdf.ts`: buat QR (isi `BASE_URL/verifikasi/<ID>`), tempel di bawah halaman (pilih: semua halaman atau halaman terakhir; **default: halaman terakhir**), tambahkan teks kecil nama, tanggal, ID
+- [x] `app/api/sign/route.ts`: **wajib login (401 bila tidak)** → periksa `Origin` → validasi → buat ID → tempel QR → hash PDF final → tanda tangani → simpan DB (dengan `user_id`, nama dan email dari akun) → kembalikan PDF
+- [x] `app/tanda-tangan/page.tsx` + `UploadBox.tsx`: drag & drop, nama penandatangan tampil dari akun (hanya baca), tombol proses, indikator loading, unduh hasil, tampilkan ID dan peringatan "jangan ubah/simpan ulang file"
+- [x] Penanganan galat yang ramah (file salah, terlalu besar, server gagal)
 - **Uji Fase:**
-  - [ ] Unggah PDF contoh → mendapat PDF dengan QR di bawah
-  - [ ] QR bisa discan HP dan mengarah ke URL benar
-  - [ ] Baris tersimpan di database dengan hash, signature, dan `user_id` pengguna yang login
-  - [ ] Permintaan ke `/api/sign` tanpa login ditolak (401)
+  - [x] Unggah PDF contoh → mendapat PDF dengan QR di bawah
+  - [x] QR bisa discan HP dan mengarah ke URL benar
+  - [x] Baris tersimpan di database dengan hash, signature, dan `user_id` pengguna yang login
+  - [x] Permintaan ke `/api/sign` tanpa login ditolak (401)
 
 ## FASE 7 — Fitur Cek Keaslian
 - [ ] `app/api/verify/route.ts`: terima ID + PDF → hitung hash → bandingkan dengan DB → verifikasi signature → cek status → kembalikan hasil (`ASLI`, `DIUBAH`, `TIDAK_DITEMUKAN`, `DICABUT`)
@@ -213,6 +213,7 @@
 | 2026-11-25 | Fase 4 | Database Supabase (PostgreSQL): skema documents & signing_keys, RLS aktif tanpa policy publik, lib/db.ts query berparameter | Uji koneksi, insert, read, revoke, dan pembatasan RLS via publishable key sukses lolos |
 | 2026-11-25 | Fase 4B | Autentikasi Google via Supabase Auth: @supabase/ssr, proxy.ts session refresher & route protection, auth callback aman, halaman masuk, tombol sign out, navbar terintegrasi akun | Uji rute publik vs terproteksi (/tanda-tangan -> /masuk, /verifikasi publik) dan proteksi open-redirect lolos |
 | 2026-11-25 | Fase 5 | Kriptografi RSA-2048 / SHA-256: generate-keys.mjs, lib/crypto.ts (hash, sign, verify, safeEqual timing-safe), formatPemKey otomatis | Kunci .env.local berhasil diverifikasi dengan unit test tanda tangan digital |
+| 2026-11-25 | Fase 6 | Fitur Buat Tanda Tangan: lib/validate.ts, lib/pdf.ts stamping QR & metadata, api/sign terproteksi auth & CSRF, UploadBox.tsx, app/tanda-tangan/page.tsx | Pengujian end-to-end penandatanganan dan penolakan 401 unauthenticated lolos verifikasi |
 
 ---
 
