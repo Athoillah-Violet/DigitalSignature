@@ -109,13 +109,13 @@
   - [x] Parameter `next` berisi URL luar (mis. `https://evil.com`) diabaikan
 
 ## FASE 5 — Kriptografi
-- [ ] Buat `scripts/generate-keys.mjs` yang menghasilkan pasangan kunci (RSA-2048 atau ECDSA P-256) dan mencetak PEM siap tempel ke `.env.local`
+- [x] Buat `scripts/generate-keys.mjs` yang menghasilkan pasangan kunci (RSA-2048 atau ECDSA P-256) dan mencetak PEM siap tempel ke `.env.local`
 - [ ] Pengguna menjalankan skrip dan mengisi `SIGNING_PRIVATE_KEY`, `SIGNING_PUBLIC_KEY`, `SIGNING_KEY_ID` *(tindakan pengguna)*
-- [ ] `lib/crypto.ts`: `sha256Hex(buffer)`, `signHash(hashHex)`, `verifySignature(hashHex, signature)`, `safeEqual(a, b)` (pakai `timingSafeEqual`)
-- [ ] Muat kunci dari env dengan penanganan `\n`
+- [x] `lib/crypto.ts`: `sha256Hex(buffer)`, `signHash(hashHex)`, `verifySignature(hashHex, signature)`, `safeEqual(a, b)` (pakai `timingSafeEqual`)
+- [x] Muat kunci dari env dengan penanganan `\n`
 - **Uji Fase:**
-  - [ ] Tes: hash dokumen yang sama → sama; satu byte beda → beda
-  - [ ] Tes: signature valid lolos, signature/hash yang diubah gagal
+  - [x] Tes: hash dokumen yang sama → sama; satu byte beda → beda
+  - [x] Tes: signature valid lolos, signature/hash yang diubah gagal
 
 ## FASE 6 — Fitur Buat Tanda Tangan
 - [ ] `lib/validate.ts`: cek tipe, magic bytes `%PDF-`, ukuran ≤ 10 MB, skema `zod` untuk input form (nama penandatangan tidak diinput, diambil dari akun)
@@ -199,7 +199,11 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- (kosong)
+- **Fase 5 (Tindakan Pengguna):** Skrip generator kunci `scripts/generate-keys.mjs` dan modul `src/lib/crypto.ts` telah selesai dibuat dan diverifikasi dengan unit test. Pengguna perlu menjalankan skrip generator kunci di terminal:
+  ```bash
+  node scripts/generate-keys.mjs
+  ```
+  lalu salin 3 baris output (`SIGNING_KEY_ID`, `SIGNING_PRIVATE_KEY`, dan `SIGNING_PUBLIC_KEY`) ke file `.env.local`.
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
