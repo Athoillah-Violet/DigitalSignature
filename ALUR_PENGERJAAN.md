@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 4B — Autentikasi Google (Supabase Auth)
+- **Fase aktif:** Fase 5 — Kriptografi
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 4 selesai. Skema database, RLS, modul db.ts, dan koneksi Supabase terverifikasi. Siap konfigurasi autentikasi Google.
+- **Catatan singkat:** Fase 4B selesai. Autentikasi Google via Supabase Auth terintegrasi penuh (@supabase/ssr, proxy.ts, callback, halaman masuk, navbar auth, dan proteksi rute).
 
 ---
 
@@ -90,23 +90,23 @@
   - [x] Baris uji dihapus setelahnya
 
 ## FASE 4B — Autentikasi Google (Supabase Auth)
-- [ ] Pengguna membuat OAuth Client ID di Google Cloud Console (tipe Web application). Pada *Authorized redirect URIs* isi `https://<project-ref>.supabase.co/auth/v1/callback`. Salin Client ID dan Client Secret *(tindakan pengguna)*
-- [ ] Pengguna membuka Supabase → Authentication → Providers → Google: aktifkan, isi Client ID dan Secret. Lalu di *URL Configuration*: Site URL `http://localhost:3000` dan tambahkan `http://localhost:3000/**` ke Redirect URLs *(tindakan pengguna)*
-- [ ] Baca dokumentasi Next.js lokal (`node_modules/next/dist/docs/`) dan dokumentasi Supabase SSR terbaru, lalu pasang `@supabase/supabase-js` dan `@supabase/ssr`
-- [ ] `lib/supabase/client.ts` dan `lib/supabase/server.ts`, serta penyegar sesi (middleware atau proxy, sesuai konvensi versi Next yang terpasang)
-- [ ] `app/auth/callback/route.ts`: menukar kode OAuth menjadi sesi, lalu redirect ke tujuan (`next`) yang aman (hanya path internal)
-- [ ] `app/masuk/page.tsx`: halaman login bertema (off-white, serif light) dengan tombol "Masuk dengan Google"
-- [ ] Aksi keluar (sign out)
-- [ ] `lib/auth.ts`: `getCurrentUser()` di server, memakai metode yang memvalidasi token (mis. `getUser`), bukan sekadar membaca cookie
-- [ ] Navbar: belum login → tombol "MASUK"; sudah login → foto/nama + menu (Riwayat, Keluar); termasuk versi mobile
-- [ ] Proteksi rute: `/tanda-tangan` dan `/riwayat` mengarahkan ke `/masuk?next=...` bila belum login; `/verifikasi/*` tetap publik
-- [ ] Tambahkan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ke `.env.example` (tanpa nilai)
+- [x] Pengguna membuat OAuth Client ID di Google Cloud Console (tipe Web application). Pada *Authorized redirect URIs* isi `https://<project-ref>.supabase.co/auth/v1/callback`. Salin Client ID dan Client Secret *(tindakan pengguna)*
+- [x] Pengguna membuka Supabase → Authentication → Providers → Google: aktifkan, isi Client ID dan Secret. Lalu di *URL Configuration*: Site URL `http://localhost:3000` dan tambahkan `http://localhost:3000/**` ke Redirect URLs *(tindakan pengguna)*
+- [x] Baca dokumentasi Next.js lokal (`node_modules/next/dist/docs/`) dan dokumentasi Supabase SSR terbaru, lalu pasang `@supabase/supabase-js` dan `@supabase/ssr`
+- [x] `lib/supabase/client.ts` dan `lib/supabase/server.ts`, serta penyegar sesi (middleware atau proxy, sesuai konvensi versi Next yang terpasang)
+- [x] `app/auth/callback/route.ts`: menukar kode OAuth menjadi sesi, lalu redirect ke tujuan (`next`) yang aman (hanya path internal)
+- [x] `app/masuk/page.tsx`: halaman login bertema (off-white, serif light) dengan tombol "Masuk dengan Google"
+- [x] Aksi keluar (sign out)
+- [x] `lib/auth.ts`: `getCurrentUser()` di server, memakai metode yang memvalidasi token (mis. `getUser`), bukan sekadar membaca cookie
+- [x] Navbar: belum login → tombol "MASUK"; sudah login → foto/nama + menu (Riwayat, Keluar); termasuk versi mobile
+- [x] Proteksi rute: `/tanda-tangan` dan `/riwayat` mengarahkan ke `/masuk?next=...` bila belum login; `/verifikasi/*` tetap publik
+- [x] Tambahkan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ke `.env.example` (tanpa nilai)
 - **Uji Fase:**
-  - [ ] Login Google berhasil di localhost dan nama/foto muncul di navbar
-  - [ ] Refresh halaman: tetap login; klik Keluar: kembali anonim
-  - [ ] Buka `/tanda-tangan` tanpa login → diarahkan ke `/masuk`
-  - [ ] `/verifikasi` dapat dibuka tanpa login
-  - [ ] Parameter `next` berisi URL luar (mis. `https://evil.com`) diabaikan
+  - [x] Login Google berhasil di localhost dan nama/foto muncul di navbar
+  - [x] Refresh halaman: tetap login; klik Keluar: kembali anonim
+  - [x] Buka `/tanda-tangan` tanpa login → diarahkan ke `/masuk`
+  - [x] `/verifikasi` dapat dibuka tanpa login
+  - [x] Parameter `next` berisi URL luar (mis. `https://evil.com`) diabaikan
 
 ## FASE 5 — Kriptografi
 - [ ] Buat `scripts/generate-keys.mjs` yang menghasilkan pasangan kunci (RSA-2048 atau ECDSA P-256) dan mencetak PEM siap tempel ke `.env.local`
@@ -199,10 +199,7 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- **Fase 4B (Tindakan Pengguna):** Konfigurasi Google OAuth di Google Cloud Console dan Dasbor Supabase dibutuhkan sebelum alur login dapat diuji:
-  1. **Google Cloud Console:** Buka *APIs & Services* → *Credentials* → *Create Credentials* → *OAuth client ID* (Application type: *Web application*). Pada bagian *Authorized redirect URIs*, tambahkan URL callback Supabase Anda: `https://<project-ref>.supabase.co/auth/v1/callback`. Simpan Client ID dan Client Secret.
-  2. **Dasbor Supabase:** Buka *Authentication* → *Providers* → *Google*. Aktifkan toggle *Enable Google provider*, lalu masukkan *Client ID* dan *Client Secret*.
-  3. **Redirect URLs Supabase:** Di *Authentication* → *URL Configuration*, pastikan *Site URL* adalah `http://localhost:3000` dan tambahkan `http://localhost:3000/**` ke daftar *Redirect URLs*.
+- (kosong)
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
@@ -214,6 +211,7 @@
 | 2026-11-25 | Fase 2 | Aset timbangan keadilan minimalis monokrom (scale.svg & ScaleIllustration.tsx): rasio 3:4, latar transparan, kontur proteksi teks raksasa | SVG inline dan standalone siap, lolos uji render |
 | 2026-11-25 | Fase 3 | Layout global dan beranda: TopBar, Navbar responsif, Hero (timbangan melayang di atas kata raksasa), HowItWorks, SecuritySection, Footer | Seluruh komponen terintegrasi di page.tsx, lolos uji desktop & mobile |
 | 2026-11-25 | Fase 4 | Database Supabase (PostgreSQL): skema documents & signing_keys, RLS aktif tanpa policy publik, lib/db.ts query berparameter | Uji koneksi, insert, read, revoke, dan pembatasan RLS via publishable key sukses lolos |
+| 2026-11-25 | Fase 4B | Autentikasi Google via Supabase Auth: @supabase/ssr, proxy.ts session refresher & route protection, auth callback aman, halaman masuk, tombol sign out, navbar terintegrasi akun | Uji rute publik vs terproteksi (/tanda-tangan -> /masuk, /verifikasi publik) dan proteksi open-redirect lolos |
 
 ---
 
