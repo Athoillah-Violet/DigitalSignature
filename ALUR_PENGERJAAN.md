@@ -199,7 +199,10 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- (kosong)
+- **Fase 4B (Tindakan Pengguna):** Konfigurasi Google OAuth di Google Cloud Console dan Dasbor Supabase dibutuhkan sebelum alur login dapat diuji:
+  1. **Google Cloud Console:** Buka *APIs & Services* → *Credentials* → *Create Credentials* → *OAuth client ID* (Application type: *Web application*). Pada bagian *Authorized redirect URIs*, tambahkan URL callback Supabase Anda: `https://<project-ref>.supabase.co/auth/v1/callback`. Simpan Client ID dan Client Secret.
+  2. **Dasbor Supabase:** Buka *Authentication* → *Providers* → *Google*. Aktifkan toggle *Enable Google provider*, lalu masukkan *Client ID* dan *Client Secret*.
+  3. **Redirect URLs Supabase:** Di *Authentication* → *URL Configuration*, pastikan *Site URL* adalah `http://localhost:3000` dan tambahkan `http://localhost:3000/**` ke daftar *Redirect URLs*.
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
