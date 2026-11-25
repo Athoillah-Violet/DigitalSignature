@@ -12,7 +12,7 @@
 | Nama kerja | VERITAS (boleh diganti, simpan di `lib/config.ts`) |
 | Platform | Web responsif (nyaman di HP, bisa dibungkus APK/PWA belakangan) |
 | Fitur utama | 1) Buat Tanda Tangan (wajib login), 2) Cek Keaslian (publik), 3) Login Google & Riwayat Dokumen |
-| Format dokumen | PDF saja (maks 10 MB) |
+| Format dokumen | PDF saja (maks 4 MB, disesuaikan dengan batas Serverless Vercel) |
 | Bahasa antarmuka | Indonesia |
 | Tujuan | Belajar / portofolio / internal. Belum berstatus tanda tangan tersertifikasi (lihat bagian 9) |
 
@@ -239,7 +239,7 @@ Aturan: kunci privat hanya di env server, tidak pernah di kode, log, atau repo.
 
 ## 9. Keamanan & Batasan
 
-- Hanya terima `application/pdf`, cek magic bytes `%PDF-`, batasi 10 MB.
+- Hanya terima `application/pdf`, cek magic bytes `%PDF-`, batasi 4 MB (batas aman Vercel Serverless Function).
 - Rate limiting sederhana pada `/api/sign` dan `/api/verify`.
 - Validasi input dengan `zod`; escape nama penandatangan saat ditampilkan.
 - Header keamanan dasar (CSP, X-Frame-Options, dll) di `next.config`.

@@ -115,7 +115,7 @@ export default function UploadBox({ onFileSelect, selectedFile, error, onClear }
                 Tarik & Lepas File PDF ke Sini
               </p>
               <p className="text-xs text-[#666666] mt-1 font-mono">
-                atau klik untuk memilih berkas dari komputer (Maksimal 10 MB)
+                atau klik untuk memilih berkas dari komputer (Maksimal 4 MB)
               </p>
             </div>
             <span className="label-mono text-[10px] text-[#888888] mt-2">

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+// Batas ukuran fungsi Serverless Vercel adalah 4.5 MB untuk request payload.
+// Kita batasi maksimum 4 MB agar aman dari batas 4.5 MB Vercel Serverless Function.
+export const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
 
 export const SignFormSchema = z.object({
   placement: z.enum(['last', 'all']).default('last'),
@@ -21,7 +23,7 @@ export function validatePdfBuffer(buffer: Buffer): { valid: boolean; error?: str
   if (buffer.length > MAX_FILE_SIZE) {
     return {
       valid: false,
-      error: 'Ukuran file melebihi batas maksimal 10 MB.',
+      error: 'Ukuran file melebihi batas maksimal 4 MB (batas serverless hosting).',
     };
   }
 

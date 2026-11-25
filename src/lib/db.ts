@@ -1,8 +1,12 @@
 import { Pool } from 'pg';
 
 // Supabase direct connection or transaction pooler requires SSL in cloud environments
+// Pada arsitektur Serverless (Vercel), batasi max pool dan idle timeout agar tidak menghabiskan koneksi database
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  max: 3, // Maksimal 3 koneksi per serverless instance
+  idleTimeoutMillis: 10000, // Putus koneksi menganggur setelah 10 detik
+  connectionTimeoutMillis: 5000,
   ssl:
     process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('supabase.co')
       ? { rejectUnauthorized: false }

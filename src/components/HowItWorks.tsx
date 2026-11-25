@@ -6,7 +6,7 @@ export default function HowItWorks() {
       number: '01',
       title: 'Unggah Dokumen',
       icon: FileUp,
-      desc: 'Pengguna mengunggah dokumen PDF asli (hingga 10 MB) dan menentukan nama penandatangan yang sah.',
+      desc: 'Pengguna mengunggah dokumen PDF asli (hingga 4 MB) dan menentukan nama penandatangan yang sah.',
       detail: 'Format murni PDF // Validasi magic bytes',
     },
     {

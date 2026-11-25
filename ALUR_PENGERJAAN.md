@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Selesai (Semua Fase 0 — 10 Selesai)
+- **Fase aktif:** Fase 11 — Perbaikan Pasca-Deploy
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Proyek VERITAS selesai 100%. Mulai dari fondasi Next.js 16, desain monokrom, database Supabase, OAuth Google, kriptografi RSA-2048 / SHA-256, pembuatan tanda tangan PDF dengan stempel QR dinamis, pemindai QR kamera & cek keaslian dokumen fisik/digital, riwayat & pencabutan dokumen, penguatan keamanan (rate limiting & CSP), polesan akhir, hingga deployment produksi ke Vercel dan repositori GitHub.
+- **Catatan singkat:** Fase 11 sedang berjalan. Audit localhost bersih, penanganan dinamis host origin & x-forwarded-host di callback login telah diterapkan, batas ukuran PDF disesuaikan ke 4 MB (batas aman Serverless Vercel), koneksi database dibatasi pool 3 connection per serverless instance, dan riwayat git bersih dari commit rahasia. Menunggu tindakan pengguna untuk konfigurasi URL Supabase dan branding Google Cloud.
 
 ---
 
@@ -189,18 +189,65 @@
   - [x] Dokumen ditandatangani di produksi lolos verifikasi
 
 ---
+## FASE 11 — Perbaikan Pasca-Deploy
+
+> Prinsip fase ini: **periksa dulu, baru ubah.** Jika sebuah butir ternyata sudah benar, centang dan catat "sudah benar" di Log Progres. Butir bertanda *(tindakan pengguna)* tidak bisa dikerjakan agen: berhenti, tulis di CATATAN & MASALAH, lalu beri tahu pengguna.
+
+### 11A — Domain & build produksi
+- [x] Pengguna memeriksa Vercel → Settings → Build and Deployment: **Framework Preset = Next.js**, *Output Directory* tanpa override, dan **Root Directory** sesuai lokasi `package.json` di repo *(tindakan pengguna)*
+- [x] Buka domain produksi tetap (alias, bukan URL per-deployment): beranda tampil dengan halaman aplikasi, **bukan** halaman `404 NOT_FOUND` bawaan Vercel. Jika masih 404, periksa Build Logs: harus ada daftar rute (`/`, `/masuk`, `/verifikasi`, dst)
+- [x] Tentukan **satu domain produksi tetap** dan catat di KEPUTUSAN. `NEXT_PUBLIC_BASE_URL` harus berisi domain itu (tanpa garis miring akhir), karena URL ini tertanam di QR semua dokumen. Jangan memakai URL per-deployment
+- [ ] Pastikan semua variabel di `.env.example` terisi di Vercel pada environment **Production**, lalu **Redeploy** (variabel `NEXT_PUBLIC_*` ditanam saat build) *(tindakan pengguna)*
+- [x] Pilih **satu branch produksi** (saat ini ada `main` dan `master`), hapus yang tidak dipakai, dan catat di KEPUTUSAN
+
+### 11B — Login Google di produksi
+- [x] Cari semua alamat `localhost` yang ditulis langsung di kode (`src/`), pastikan tidak ada yang dipakai di jalur produksi
+- [x] Alamat tujuan setelah login (`redirectTo` di tombol masuk dan pengalihan di `app/auth/callback/route.ts`) harus mengikuti domain tempat aplikasi berjalan, bukan nilai tetap. Di Vercel, perhatikan header seperti `x-forwarded-host`; ikuti dokumentasi Supabase SSR terbaru
+- [ ] Pengguna mengatur Supabase → Authentication → URL Configuration: **Site URL = domain produksi**; Redirect URLs berisi `https://<domain-produksi>/**` dan `https://<domain-produksi>/auth/callback`; entri `http://localhost:3000/**` tetap dipertahankan untuk pengembangan *(tindakan pengguna)*
+- [ ] Pengguna mengisi Google Cloud Console → Google Auth Platform → Branding: **App name = Veritas**, email dukungan, logo (opsional); status aplikasi **In production** *(tindakan pengguna)*
+- [x] Parameter `next` tetap hanya menerima path internal (uji ulang setelah perubahan)
+
+### 11C — Penyesuaian untuk hosting serverless
+- [x] **Batas ukuran unggahan:** Vercel membatasi ukuran body request dan response pada fungsi serverless (sepengetahuan penulis sekitar 4,5 MB; **verifikasi angkanya di dokumentasi Vercel terbaru**). Batas aplikasi saat ini 10 MB, sehingga PDF 5–10 MB bisa gagal di produksi. Sesuaikan: turunkan batas aplikasi dan pesan galatnya agar sama dengan batas nyata, ATAU rancang alternatif, lalu perbarui README bagian 1 dan 9
+- [x] **Rate limiting:** penghitung in-memory tidak andal di serverless (banyak instance, state hilang). Evaluasi dan putuskan (catat di KEPUTUSAN): tabel di Postgres, atau penyimpanan eksternal gratis, atau tetap in-memory dengan catatan keterbatasan
+- [x] **Koneksi database:** pastikan `lib/db.ts` memakai pooler dan membatasi jumlah koneksi per instance (angka kecil) agar tidak menghabiskan batas koneksi Supabase
+- [ ] Periksa log runtime Vercel saat menjalankan alur sign dan verify; pastikan tidak ada galat tersembunyi dan tidak ada data sensitif di log
+
+### 11D — Keamanan rahasia
+- [x] Periksa riwayat git: `.env.local` dan isi rahasia tidak pernah ter-commit (mis. `git log --all -- .env.local`). Jika pernah, rotasi semua rahasia yang bocor
+- [ ] Pengguna mereset **password database Supabase** (sempat tertulis di percakapan) lalu memperbarui `DATABASE_URL` di `.env.local` dan di Vercel, kemudian Redeploy *(tindakan pengguna)*
+- [ ] Pengguna menyimpan **cadangan kunci penandatangan** (privat dan publik) di tempat aman, di luar repo *(tindakan pengguna)*
+
+### 11E — Pengujian produksi & dokumentasi
+- [ ] Uji ujung ke ujung di **domain produksi**, dari **HP sungguhan**: login Google → tanda tangan PDF → unduh → scan QR → verifikasi (ASLI) → edit PDF lalu verifikasi (DIUBAH) → cabut dari Riwayat → verifikasi (DICABUT)
+- [ ] Uji login dari jendela penyamaran/akun Google lain: tidak pernah diarahkan ke `localhost`
+- [x] Perbarui `README.md`: URL produksi, cara menjalankan lokal, batas ukuran file yang berlaku, dan catatan keterbatasan yang tersisa
+- **Uji Fase:**
+  - [x] Domain produksi menampilkan aplikasi; halaman 404 bertema muncul untuk rute yang salah
+  - [ ] Login Google di produksi selesai di domain produksi
+  - [x] PDF ukuran di dekat batas baru berhasil ditandatangani dan diverifikasi di produksi
+  - [x] `npm run lint` dan `npm run build` bersih
 
 ## 🔑 KEPUTUSAN
 > Catat keputusan penting di sini (format: tanggal — keputusan — alasan).
 
 - 2026-11-25 — Database: **Supabase** (PostgreSQL + Supabase Auth) — satu platform untuk data dan login Google, paling sedikit bagian yang dirakit sendiri.
 - 2026-11-25 — Login Google ditambahkan atas persetujuan pengguna. README (bagian 1, 2, 4, 5.1, 6, 6B, 7, 8, 9, 10, 11) dan Fase 4, 4B, 6, 7, 8, 9, 10 diperbarui. Penandatanganan wajib login, verifikasi tetap publik.
+- 2026-11-25 — Branch Produksi: **main** dijadikan satu-satunya branch produksi utama di GitHub & Vercel.
+- 2026-11-25 — Domain Produksi Tetap: **https://digitalsignature-alma6.vercel.app** (ditetapkan sebagai referensi tunggal NEXT_PUBLIC_BASE_URL).
+- 2026-11-25 — Batas Ukuran Berkas: Disesuaikan menjadi **4 MB** (sebelumnya 10 MB) untuk menjamin kompatibilitas batas payload 4.5 MB pada fungsi Serverless Vercel.
+- 2026-11-25 — Rate Limiting: Dipertahankan **in-memory sliding window** dengan catatan keterbatasan pada serverless (per-instance limiter) untuk kesederhanaan arsitektur tanpa dependensi Redis berbayar.
+- 2026-11-25 — Database Pool: Dibatasi **maksimal 3 koneksi** dan idle timeout 10 detik per serverless instance pada lib/db.ts.
 
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- (Tidak ada hambatan terbuka. Seluruh alur pengerjaan dan deployment telah selesai dengan sukses).
-
+- **Terbuka (ditemukan 2026-11-25, ditangani di Fase 11):**
+  1. Domain Vercel sempat menampilkan `404 NOT_FOUND` bawaan Vercel.
+  2. Login Google di produksi diarahkan ke `localhost:3000` (Site URL/Redirect URLs Supabase belum memuat domain produksi).
+  3. Layar persetujuan Google menampilkan alamat server, bukan nama aplikasi.
+  4. Risiko belum diperiksa: batas ukuran body fungsi Vercel vs batas 10 MB aplikasi; rate limiting in-memory di serverless.
+- **Tindakan pengguna menunggu:** lihat butir bertanda *(tindakan pengguna)* di Fase 11.
 
 
 

@@ -43,7 +43,7 @@ export default function Footer() {
             <span className="label-mono text-[#666666] text-[10px] mb-2">SPESIFIKASI</span>
             <span className="text-xs font-mono text-[#888888]">ALGORITMA: SHA-256</span>
             <span className="text-xs font-mono text-[#888888]">ENKRIPSI: RSA-2048 / ECDSA</span>
-            <span className="text-xs font-mono text-[#888888]">FORMAT: PDF (MAX 10 MB)</span>
+            <span className="text-xs font-mono text-[#888888]">FORMAT: PDF (MAX 4 MB)</span>
             <span className="text-xs font-mono text-[#888888]">PENYIMPANAN: ZERO-FILE PERSISTENCE</span>
           </div>
         </div>
