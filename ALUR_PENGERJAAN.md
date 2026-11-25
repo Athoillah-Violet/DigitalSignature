@@ -176,7 +176,7 @@
   - [x] Semua "Definisi Selesai" di README bagian 11 terpenuhi
 
 ## FASE 10 — Deploy
-- [ ] Push ke GitHub (pastikan tidak ada rahasia)
+- [x] Push ke GitHub (pastikan tidak ada rahasia)
 - [ ] Hubungkan ke Vercel, isi semua env variable di dasbor Vercel
 - [ ] Set `NEXT_PUBLIC_BASE_URL` ke domain produksi (penting: URL di dalam QR bergantung padanya)
 - [ ] Pengguna menambahkan domain produksi ke Supabase → URL Configuration (Site URL dan Redirect URLs) *(tindakan pengguna)*
@@ -199,7 +199,13 @@
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- (kosong)
+- **Tindakan Pengguna Diperlukan (Fase 10 - Deploy):**
+  1. Hubungkan repositori GitHub `https://github.com/Athoillah-Violet/DigitalSignature.git` ke Vercel.
+  2. Isi Environment Variables di dasbor Vercel sesuai `.env.example` (termasuk nilai rahasia dari `.env.local`).
+  3. Set `NEXT_PUBLIC_BASE_URL` di Vercel ke domain produksi Vercel Anda (misal `https://<nama-project>.vercel.app`).
+  4. Tambahkan domain produksi Vercel ke Dasbor Supabase: **Authentication -> URL Configuration** (Site URL dan Redirect URLs: `https://<domain-vercel>/auth/callback`).
+  5. Periksa Google Cloud Console OAuth consent screen: pastikan redirect URI Supabase terdaftar dan ubah status jika ingin mengizinkan pengguna publik.
+
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.
