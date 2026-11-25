@@ -18,16 +18,17 @@
 7. **Jika keputusan baru diambil** (mis. memilih Supabase atau Neon, mengganti nama), catat di **KEPUTUSAN** di bawah.
 8. **Jangan pernah** menaruh kunci privat, password database, atau isi `.env.local` ke file mana pun yang di-commit, termasuk file ini.
 9. Jangan mengubah konsep di `README.md` tanpa persetujuan pengguna. Jika ada konflik, tanyakan.
-10. Setelah menyelesaikan satu fase, **berhenti dan laporkan** ringkasan ke pengguna, lalu tanya apakah lanjut ke fase berikutnya (kecuali pengguna sudah menyuruh lanjut terus).
+10. **Versi Next.js di proyek ini berbeda dari pengetahuan umum.** Sebelum menulis kode Next.js (terutama routing, middleware/proxy, cookies, route handler), baca panduan di `node_modules/next/dist/docs/` dan ikuti `AGENTS.md`. Untuk Supabase Auth di Next.js, baca dokumentasi resmi Supabase terbaru, jangan mengandalkan ingatan.
+11. Setelah menyelesaikan satu fase, **berhenti dan laporkan** ringkasan ke pengguna, lalu tanya apakah lanjut ke fase berikutnya (kecuali pengguna sudah menyuruh lanjut terus).
 
 ---
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 4 — Database
+- **Fase aktif:** Fase 4 — Database (lalu Fase 4B — Autentikasi Google)
 - **Terakhir diperbarui:** 2026-11-25
-- **Database dipilih:** (belum dipilih: Supabase / Neon)
-- **Catatan singkat:** Fase 3 selesai, Layout Global (TopBar, Navbar, Footer) dan Beranda (Hero, HowItWorks, SecuritySection) sukses dibangun dan diuji.
+- **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
+- **Catatan singkat:** Fase 3 selesai. Rencana direvisi: ditambah login Google (Fase 4B) dan Riwayat Dokumen (di Fase 7). Fase 6 kini mewajibkan login. README sudah diperbarui sesuai (bagian 6B).
 
 ---
 
@@ -76,15 +77,36 @@
   - [x] Tampilan HP (lebar 375px) tidak pecah
   - [x] Animasi berkedip, melayang, dan scroll berjalan
 
-## FASE 4 — Database
-- [ ] Pengguna menyiapkan database gratis (Supabase atau Neon) dan mengisi `DATABASE_URL` di `.env.local` *(butuh tindakan pengguna; tanyakan bila belum ada)*
-- [ ] Buat file `db/schema.sql` berisi tabel `documents` (dan `signing_keys` bila dipakai) sesuai README bagian 6
-- [ ] Jalankan skema ke database
-- [ ] Buat `lib/db.ts` (koneksi, dengan query berparameter)
-- [ ] Fungsi: `insertDocument`, `getDocumentById`, `revokeDocument`
+## FASE 4 — Database (Supabase)
+- [ ] Pengguna membuat proyek Supabase gratis, lalu mengisi `.env.local`: `DATABASE_URL` (connection string Postgres dari dasbor; pakai pooler bila tersedia), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` *(tindakan pengguna; tanyakan bila belum ada)*
+- [x] Buat `db/schema.sql`: tabel `documents` sesuai README bagian 6 (termasuk `user_id uuid not null references auth.users(id)`, `signer_name`, `signer_email`), index pada `user_id`, dan tabel `signing_keys` bila dipakai
+- [x] Di `schema.sql`, aktifkan RLS: `alter table ... enable row level security` untuk `documents` dan `signing_keys`, **tanpa** policy publik
+- [x] Jalankan skema ke database (lewat SQL Editor Supabase atau skrip)
+- [x] Buat `lib/db.ts` (koneksi memakai `DATABASE_URL`, semua query berparameter)
+- [x] Fungsi: `insertDocument`, `getDocumentById`, `listDocumentsByUser(userId)`, `revokeDocument(id, userId)` (hanya berhasil bila `user_id` cocok)
 - **Uji Fase:**
-  - [ ] Skrip uji kecil bisa insert lalu baca satu baris
-  - [ ] Baris uji dihapus setelahnya
+  - [x] Skrip uji kecil bisa insert lalu baca satu baris (gunakan `user_id` uji yang sah atau sementara tanpa FK, lalu catat caranya)
+  - [ ] Tabel tidak bisa dibaca lewat publishable key (RLS bekerja)
+  - [x] Baris uji dihapus setelahnya
+
+## FASE 4B — Autentikasi Google (Supabase Auth)
+- [ ] Pengguna membuat OAuth Client ID di Google Cloud Console (tipe Web application). Pada *Authorized redirect URIs* isi `https://<project-ref>.supabase.co/auth/v1/callback`. Salin Client ID dan Client Secret *(tindakan pengguna)*
+- [ ] Pengguna membuka Supabase → Authentication → Providers → Google: aktifkan, isi Client ID dan Secret. Lalu di *URL Configuration*: Site URL `http://localhost:3000` dan tambahkan `http://localhost:3000/**` ke Redirect URLs *(tindakan pengguna)*
+- [ ] Baca dokumentasi Next.js lokal (`node_modules/next/dist/docs/`) dan dokumentasi Supabase SSR terbaru, lalu pasang `@supabase/supabase-js` dan `@supabase/ssr`
+- [ ] `lib/supabase/client.ts` dan `lib/supabase/server.ts`, serta penyegar sesi (middleware atau proxy, sesuai konvensi versi Next yang terpasang)
+- [ ] `app/auth/callback/route.ts`: menukar kode OAuth menjadi sesi, lalu redirect ke tujuan (`next`) yang aman (hanya path internal)
+- [ ] `app/masuk/page.tsx`: halaman login bertema (off-white, serif light) dengan tombol "Masuk dengan Google"
+- [ ] Aksi keluar (sign out)
+- [ ] `lib/auth.ts`: `getCurrentUser()` di server, memakai metode yang memvalidasi token (mis. `getUser`), bukan sekadar membaca cookie
+- [ ] Navbar: belum login → tombol "MASUK"; sudah login → foto/nama + menu (Riwayat, Keluar); termasuk versi mobile
+- [ ] Proteksi rute: `/tanda-tangan` dan `/riwayat` mengarahkan ke `/masuk?next=...` bila belum login; `/verifikasi/*` tetap publik
+- [ ] Tambahkan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ke `.env.example` (tanpa nilai)
+- **Uji Fase:**
+  - [ ] Login Google berhasil di localhost dan nama/foto muncul di navbar
+  - [ ] Refresh halaman: tetap login; klik Keluar: kembali anonim
+  - [ ] Buka `/tanda-tangan` tanpa login → diarahkan ke `/masuk`
+  - [ ] `/verifikasi` dapat dibuka tanpa login
+  - [ ] Parameter `next` berisi URL luar (mis. `https://evil.com`) diabaikan
 
 ## FASE 5 — Kriptografi
 - [ ] Buat `scripts/generate-keys.mjs` yang menghasilkan pasangan kunci (RSA-2048 atau ECDSA P-256) dan mencetak PEM siap tempel ke `.env.local`
@@ -96,15 +118,16 @@
   - [ ] Tes: signature valid lolos, signature/hash yang diubah gagal
 
 ## FASE 6 — Fitur Buat Tanda Tangan
-- [ ] `lib/validate.ts`: cek tipe, magic bytes `%PDF-`, ukuran ≤ 10 MB, skema `zod` untuk nama
+- [ ] `lib/validate.ts`: cek tipe, magic bytes `%PDF-`, ukuran ≤ 10 MB, skema `zod` untuk input form (nama penandatangan tidak diinput, diambil dari akun)
 - [ ] `lib/pdf.ts`: buat QR (isi `BASE_URL/verifikasi/<ID>`), tempel di bawah halaman (pilih: semua halaman atau halaman terakhir; **default: halaman terakhir**), tambahkan teks kecil nama, tanggal, ID
-- [ ] `app/api/sign/route.ts`: validasi → buat ID → tempel QR → hash PDF final → tanda tangani → simpan DB → kembalikan PDF
-- [ ] `app/tanda-tangan/page.tsx` + `UploadBox.tsx`: drag & drop, input nama, tombol proses, indikator loading, unduh hasil, tampilkan ID dan peringatan "jangan ubah/simpan ulang file"
+- [ ] `app/api/sign/route.ts`: **wajib login (401 bila tidak)** → periksa `Origin` → validasi → buat ID → tempel QR → hash PDF final → tanda tangani → simpan DB (dengan `user_id`, nama dan email dari akun) → kembalikan PDF
+- [ ] `app/tanda-tangan/page.tsx` + `UploadBox.tsx`: drag & drop, nama penandatangan tampil dari akun (hanya baca), tombol proses, indikator loading, unduh hasil, tampilkan ID dan peringatan "jangan ubah/simpan ulang file"
 - [ ] Penanganan galat yang ramah (file salah, terlalu besar, server gagal)
 - **Uji Fase:**
   - [ ] Unggah PDF contoh → mendapat PDF dengan QR di bawah
   - [ ] QR bisa discan HP dan mengarah ke URL benar
-  - [ ] Baris tersimpan di database dengan hash dan signature
+  - [ ] Baris tersimpan di database dengan hash, signature, dan `user_id` pengguna yang login
+  - [ ] Permintaan ke `/api/sign` tanpa login ditolak (401)
 
 ## FASE 7 — Fitur Cek Keaslian
 - [ ] `app/api/verify/route.ts`: terima ID + PDF → hitung hash → bandingkan dengan DB → verifikasi signature → cek status → kembalikan hasil (`ASLI`, `DIUBAH`, `TIDAK_DITEMUKAN`, `DICABUT`)
@@ -114,11 +137,16 @@
 - [ ] `app/verifikasi/[id]/page.tsx`: tampilkan info penandatangan + form unggah PDF
 - [ ] `ResultCard.tsx`: tampilan hasil dengan animasi, ikon, warna (hijau/merah), rincian
 - [ ] Tampilkan catatan batasan (file harus identik)
+- [ ] `app/riwayat/page.tsx`: daftar dokumen milik pengguna (ID, nama file, tanggal, status), wajib login
+- [ ] `app/api/document/[id]/revoke/route.ts`: wajib login, hanya pemilik, periksa `Origin`; tombol "Cabut" dengan dialog konfirmasi di halaman riwayat
+- [ ] Pastikan halaman/endpoint verifikasi publik **tidak** menampilkan `signer_email`
 - **Uji Fase:**
   - [ ] PDF hasil fase 6 → **ASLI**
   - [ ] PDF yang sama tetapi diedit/disimpan ulang → **DIUBAH**
   - [ ] ID acak → **TIDAK_DITEMUKAN**
   - [ ] Status diubah `revoked` di DB → **DICABUT**
+  - [ ] Pencabutan lewat tombol di riwayat → verifikasi menampilkan **DICABUT**
+  - [ ] Pengguna B tidak bisa melihat atau mencabut dokumen pengguna A
 
 ## FASE 8 — Keamanan & Hardening
 - [ ] Rate limiting sederhana untuk `/api/sign` dan `/api/verify` (berbasis IP, in-memory atau layanan gratis)
@@ -127,10 +155,14 @@
 - [ ] Pastikan galat server tidak membocorkan detail internal
 - [ ] Sanitasi tampilan nama penandatangan
 - [ ] Kueri DB semuanya berparameter
+- [ ] Semua endpoint yang mengubah data memeriksa login + kepemilikan + `Origin` di server
+- [ ] Pastikan Client Secret Google, `DATABASE_URL`, dan kunci privat tidak muncul di bundel klien (periksa hasil build)
+- [ ] Tinjau ulang RLS aktif di semua tabel
 - **Uji Fase:**
   - [ ] Unggah file non-PDF yang diganti ekstensi → ditolak
   - [ ] File > 10 MB → ditolak
   - [ ] Permintaan beruntun cepat → terkena batas
+  - [ ] Memanggil API sign/revoke tanpa login atau dengan akun lain → ditolak
 
 ## FASE 9 — Polesan & Pengujian Akhir
 - [ ] Responsif penuh (375px, 768px, 1280px+)
@@ -138,7 +170,7 @@
 - [ ] Halaman 404 dan halaman galat bertema
 - [ ] Metadata SEO, favicon, Open Graph
 - [ ] Tinjau kecepatan (gambar/font), hapus kode tak terpakai
-- [ ] Uji ujung ke ujung (sign → unduh → scan → verifikasi) di HP sungguhan
+- [ ] Uji ujung ke ujung (login Google → sign → unduh → scan → verifikasi → cabut) di HP sungguhan
 - **Uji Fase:**
   - [ ] `npm run lint` dan `npm run build` bersih
   - [ ] Semua "Definisi Selesai" di README bagian 11 terpenuhi
@@ -147,6 +179,9 @@
 - [ ] Push ke GitHub (pastikan tidak ada rahasia)
 - [ ] Hubungkan ke Vercel, isi semua env variable di dasbor Vercel
 - [ ] Set `NEXT_PUBLIC_BASE_URL` ke domain produksi (penting: URL di dalam QR bergantung padanya)
+- [ ] Pengguna menambahkan domain produksi ke Supabase → URL Configuration (Site URL dan Redirect URLs) *(tindakan pengguna)*
+- [ ] Pengguna memeriksa layar persetujuan OAuth Google: ubah status dari *Testing* ke *In production* agar semua akun Google bisa login, bukan hanya penguji *(tindakan pengguna)*
+- [ ] Uji login Google di domain produksi
 - [ ] Uji ulang alur lengkap di produksi
 - [ ] Perbarui README: cara menjalankan lokal dan URL produksi
 - **Uji Fase:**
@@ -158,12 +193,16 @@
 ## 🔑 KEPUTUSAN
 > Catat keputusan penting di sini (format: tanggal — keputusan — alasan).
 
-- (kosong)
+- 2026-11-25 — Database: **Supabase** (PostgreSQL + Supabase Auth) — satu platform untuk data dan login Google, paling sedikit bagian yang dirakit sendiri.
+- 2026-11-25 — Login Google ditambahkan atas persetujuan pengguna. README (bagian 1, 2, 4, 5.1, 6, 6B, 7, 8, 9, 10, 11) dan Fase 4, 4B, 6, 7, 8, 9, 10 diperbarui. Penandatanganan wajib login, verifikasi tetap publik.
 
 ## 🧱 CATATAN & MASALAH
 > Catat hambatan, bug yang belum beres, atau hal yang perlu tindakan pengguna.
 
-- (kosong)
+- **Fase 4 (Tindakan Pengguna):** `DATABASE_URL` sudah terhubung dan skema database (`documents` & `signing_keys` dengan RLS) sudah sukses diaplikasikan ke Supabase. Namun, konfigurasi `.env.local` masih membutuhkan tindakan pengguna:
+  1. Ganti nama key Supabase URL menjadi `NEXT_PUBLIC_SUPABASE_URL` (saat ini tertulis di `NEXT_PUBLIC_BASE_URL`).
+  2. Kembalikan `NEXT_PUBLIC_BASE_URL=http://localhost:3000` (untuk base URL aplikasi lokal & link verifikasi QR).
+  3. Tambahkan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ambil anon public key `sb_publishable_...` atau `anon key` dari dasbor Supabase: *Project Settings -> Data API / API*).
 
 ## 📜 LOG PROGRES
 > Tambahkan satu baris tiap fase selesai. Jangan hapus baris lama.

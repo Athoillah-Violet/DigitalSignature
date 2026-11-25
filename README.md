@@ -11,7 +11,7 @@
 |---|---|
 | Nama kerja | VERITAS (boleh diganti, simpan di `lib/config.ts`) |
 | Platform | Web responsif (nyaman di HP, bisa dibungkus APK/PWA belakangan) |
-| Fitur utama | 1) Buat Tanda Tangan, 2) Cek Keaslian |
+| Fitur utama | 1) Buat Tanda Tangan (wajib login), 2) Cek Keaslian (publik), 3) Login Google & Riwayat Dokumen |
 | Format dokumen | PDF saja (maks 10 MB) |
 | Bahasa antarmuka | Indonesia |
 | Tujuan | Belajar / portofolio / internal. Belum berstatus tanda tangan tersertifikasi (lihat bagian 9) |
@@ -32,7 +32,8 @@
 | QR (buat) | `qrcode` |
 | QR (scan kamera) | `html5-qrcode` |
 | ID pendek | `nanoid` |
-| Database | PostgreSQL gratis: **Supabase** atau **Neon** (pilih salah satu, catat di Log Progres) |
+| Database | PostgreSQL gratis: **Supabase** (sudah dipilih) |
+| Autentikasi | **Supabase Auth** + Google OAuth, library `@supabase/supabase-js` dan `@supabase/ssr` |
 | Validasi | `zod` |
 | Deploy | Vercel |
 
@@ -57,7 +58,7 @@ Referensi: gaya portofolio minimalis monokrom (teks raksasa di belakang objek, n
 
 ### Struktur layout
 1. **Top bar hitam tipis** (paling atas): teks kecil kiri (nama/proyek), kanan: titik hijau berkedip + "SISTEM AKTIF".
-2. **Navbar**: kiri = Beranda, Cara Kerja, Buat Tanda Tangan, Cek Keaslian. Tengah = logo "VERITAS". Kanan = tombol hitam persegi "CEK DOKUMEN ↗".
+2. **Navbar**: kiri = Beranda, Cara Kerja, Buat Tanda Tangan, Cek Keaslian. Tengah = logo "VERITAS". Kanan = tombol hitam persegi "CEK DOKUMEN ↗" dan tombol "MASUK" (setelah login berubah jadi foto/nama akun dengan menu Riwayat dan Keluar).
 3. **Hero** (inti desain):
    - Kata besar di tengah, misalnya **VERITAS**, ukuran raksasa, di lapisan belakang (`z-0`).
    - **Gambar timbangan (SVG, latar transparan)** di tengah, menimpa sebagian huruf (`z-10`), melayang naik-turun pelan.
@@ -97,19 +98,23 @@ Hormati `prefers-reduced-motion`: matikan float dan blink bila pengguna memintan
 | `/api/sign` | POST: proses penandatanganan |
 | `/api/verify` | POST: proses verifikasi |
 | `/api/document/[id]` | GET: info publik dokumen (tanpa file) |
+| `/masuk` | Halaman login, tombol "Masuk dengan Google" |
+| `/auth/callback` | Menukar kode OAuth menjadi sesi login |
+| `/riwayat` | Daftar dokumen milik pengguna + tombol cabut (wajib login) |
+| `/api/document/[id]/revoke` | POST: mencabut dokumen milik sendiri (wajib login) |
 
 ---
 
 ## 5. Alur Kerja Sistem
 
 ### 5.1 Membuat tanda tangan
-1. Pengguna mengunggah PDF dan mengisi nama penandatangan.
+1. Pengguna **login dengan Google**, lalu mengunggah PDF. Nama penandatangan diambil otomatis dari akun, bukan diketik.
 2. Server memvalidasi (tipe PDF asli, ukuran ≤ 10 MB).
 3. Server membuat **ID unik pendek** (contoh `K7F9X2QA`).
 4. Server membuat QR berisi `https://DOMAIN/verifikasi/<ID>` lalu **menempelkannya di bagian bawah halaman** PDF (bersama teks kecil: nama, tanggal, ID).
 5. Server menghitung **SHA-256 dari PDF final** (yang sudah ada QR-nya).
 6. Hash tersebut **ditandatangani dengan kunci privat** menjadi *signature*.
-7. Database menyimpan: ID, hash, signature, nama, waktu, ID kunci, status.
+7. Database menyimpan: ID, `user_id`, hash, signature, nama, email, waktu, ID kunci, status.
 8. Server mengembalikan PDF final untuk diunduh. **File tidak disimpan di server.**
 
 > Kenapa hash dihitung setelah QR ditempel: menempelkan QR mengubah isi file. QR hanya berisi ID (sudah ditentukan di langkah 3), jadi urutannya aman dan hash final stabil.
@@ -143,7 +148,9 @@ Tabel `documents`:
 | `id` | text, primary key | ID pendek (nanoid 10 karakter huruf besar+angka) |
 | `doc_hash` | text, not null | SHA-256 hex dari PDF final |
 | `signature` | text, not null | Signature base64 |
-| `signer_name` | text, not null | Nama penandatangan |
+| `user_id` | uuid, not null | Pemilik dokumen, referensi ke `auth.users(id)` (tabel pengguna bawaan Supabase) |
+| `signer_name` | text, not null | Nama penandatangan, diambil dari akun Google |
+| `signer_email` | text, not null | Email akun; **tidak** ditampilkan di halaman verifikasi publik |
 | `file_name` | text | Nama file asli (opsional) |
 | `key_id` | text, not null | Versi kunci yang dipakai (mis. `k1`) |
 | `status` | text, default `valid` | `valid` atau `revoked` |
@@ -158,6 +165,20 @@ Tabel `signing_keys` (opsional, untuk rotasi kunci):
 | `created_at` | timestamptz | |
 
 Kunci privat **tidak pernah** masuk database.
+
+Tabel pengguna tidak dibuat sendiri: Supabase Auth menyimpannya di `auth.users`. **Row Level Security (RLS) diaktifkan** pada `documents` dan `signing_keys` tanpa policy publik, sehingga tabel tidak bisa dibaca langsung lewat API klien memakai publishable key. Semua akses data lewat server.
+
+---
+
+## 6B. Autentikasi
+
+- **Penyedia:** Google OAuth lewat Supabase Auth. Alur: tombol Masuk → Google → callback Supabase → `/auth/callback` → sesi tersimpan di cookie.
+- **Akses publik (tanpa login):** `/`, `/verifikasi`, `/verifikasi/[id]`, `/api/verify`, `/api/document/[id]`. Penerima dokumen harus bisa mengecek tanpa akun.
+- **Wajib login:** `/tanda-tangan`, `/riwayat`, `/api/sign`, aksi cabut dokumen.
+- **Pengecekan login selalu di server** (validasi token pengguna), tidak cukup hanya menyembunyikan tombol di UI.
+- **Kepemilikan:** pengguna hanya bisa melihat dan mencabut dokumen miliknya sendiri.
+- **Privasi:** halaman verifikasi publik menampilkan nama penandatangan, tidak menampilkan email.
+- Akses database dari server memakai `DATABASE_URL`; kunci `secret` (`sb_secret_...`) dan `service_role` Supabase tidak dipakai di versi 1.
 
 ---
 
@@ -179,7 +200,10 @@ veritas/
 │  │  ├─ tanda-tangan/page.tsx
 │  │  ├─ verifikasi/page.tsx
 │  │  ├─ verifikasi/[id]/page.tsx
-│  │  └─ api/{sign,verify}/route.ts
+│  │  ├─ masuk/page.tsx
+│  │  ├─ riwayat/page.tsx
+│  │  ├─ auth/callback/route.ts
+│  │  └─ api/{sign,verify}/route.ts + document/[id]/revoke/route.ts
 │  ├─ components/
 │  │  ├─ TopBar.tsx  Navbar.tsx  Hero.tsx
 │  │  ├─ ScaleIllustration.tsx
@@ -187,6 +211,8 @@ veritas/
 │  │  ├─ UploadBox.tsx  QrScanner.tsx  ResultCard.tsx
 │  │  └─ AosProvider.tsx
 │  └─ lib/
+│     ├─ supabase/{client,server}.ts   (+ penyegar sesi sesuai versi Next)
+│     ├─ auth.ts        (getCurrentUser di server)
 │     ├─ config.ts  db.ts
 │     ├─ crypto.ts      (hash, sign, verify)
 │     ├─ pdf.ts         (tempel QR + teks)
@@ -203,6 +229,8 @@ SIGNING_PRIVATE_KEY=     # PEM kunci privat (baris baru diganti \n)
 SIGNING_PUBLIC_KEY=      # PEM kunci publik
 SIGNING_KEY_ID=k1
 NEXT_PUBLIC_BASE_URL=    # contoh: http://localhost:3000 lalu domain asli
+NEXT_PUBLIC_SUPABASE_URL=       # URL proyek Supabase
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # publishable key (sb_publishable_...), aman di klien karena dilindungi RLS
 ```
 
 Aturan: kunci privat hanya di env server, tidak pernah di kode, log, atau repo.
@@ -216,13 +244,15 @@ Aturan: kunci privat hanya di env server, tidak pernah di kode, log, atau repo.
 - Validasi input dengan `zod`; escape nama penandatangan saat ditampilkan.
 - Header keamanan dasar (CSP, X-Frame-Options, dll) di `next.config`.
 - Perbandingan hash memakai `timingSafeEqual`.
-- Siapa pun yang membuka `/tanda-tangan` bisa menandatangani. Untuk versi serius, tambahkan **login** agar identitas penandatangan terbukti. Untuk versi awal, ini dicatat sebagai keterbatasan.
+- Penandatanganan wajib login Google, sehingga identitas penandatangan terikat ke akun. Ini **bukan** verifikasi identitas hukum (KTP/KYC): yang dibuktikan hanya bahwa pemilik akun Google tersebut yang menandatangani.
+- Endpoint yang mengubah data (sign, revoke) memeriksa login dan kepemilikan di server, serta memeriksa header `Origin` untuk mencegah permintaan lintas situs.
+- Jangan pernah mengekspos `DATABASE_URL`, kunci privat, atau Client Secret Google ke kode klien.
 - Ini **bukan** tanda tangan elektronik tersertifikasi (PSrE Komdigi). Cukup untuk belajar, portofolio, dan internal. Untuk kekuatan hukum, integrasikan penyedia tersertifikasi.
 
 ---
 
 ## 10. Di Luar Cakupan Versi 1
-Login & akun, penyimpanan file, multi-penandatangan, tanda tangan gambar/coretan, cap waktu dari pihak ketiga (TSA), PAdES penuh, aplikasi APK native.
+Login selain Google (email/password, GitHub), peran admin, penyimpanan file, multi-penandatangan, tanda tangan gambar/coretan, cap waktu dari pihak ketiga (TSA), PAdES penuh, aplikasi APK native.
 
 ---
 
@@ -231,4 +261,6 @@ Login & akun, penyimpanan file, multi-penandatangan, tanda tangan gambar/coretan
 - Scan QR membuka halaman verifikasi yang benar.
 - PDF asli → **ASLI**; PDF yang diubah satu karakter pun → **TIDAK ASLI**.
 - Tampilan sesuai bagian 3, animasi berjalan, responsif di HP.
+- Hanya pengguna login yang bisa menandatangani; verifikasi tetap bisa dilakukan siapa saja.
+- Pengguna melihat riwayat dokumennya sendiri dan bisa mencabutnya; tidak bisa menyentuh milik orang lain.
 - Tidak ada rahasia di repo; build produksi sukses; terdeploy.
