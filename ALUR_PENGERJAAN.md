@@ -25,10 +25,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 8 — Keamanan & Hardening
+- **Fase aktif:** Fase 9 — Polesan & Pengujian Akhir
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** Supabase (PostgreSQL + Supabase Auth)
-- **Catatan singkat:** Fase 7 selesai. Fitur Cek Keaslian (QR Scanner kamera, input ID manual, verifikasi integritas PDF byte-per-byte, ResultCard, halaman riwayat, dan pencabutan dokumen) berhasil diimplementasikan dan lolos uji end-to-end.
+- **Catatan singkat:** Fase 8 selesai. Keamanan & Hardening (rate limiting berbasis IP, Content Security Policy, X-Frame-Options, Permissions-Policy untuk kamera, proteksi CSRF Origin, verifikasi magic bytes/ukuran, sanitasi error dan tinjauan RLS) berhasil diterapkan dan diuji.
 
 ---
 
@@ -149,20 +149,20 @@
   - [x] Pengguna B tidak bisa melihat atau mencabut dokumen pengguna A
 
 ## FASE 8 — Keamanan & Hardening
-- [ ] Rate limiting sederhana untuk `/api/sign` dan `/api/verify` (berbasis IP, in-memory atau layanan gratis)
-- [ ] Header keamanan di `next.config` (CSP yang mengizinkan kamera untuk halaman verifikasi, X-Frame-Options, Referrer-Policy)
-- [ ] Pastikan tidak ada rahasia di kode/log; periksa `.gitignore`
-- [ ] Pastikan galat server tidak membocorkan detail internal
-- [ ] Sanitasi tampilan nama penandatangan
-- [ ] Kueri DB semuanya berparameter
-- [ ] Semua endpoint yang mengubah data memeriksa login + kepemilikan + `Origin` di server
-- [ ] Pastikan Client Secret Google, `DATABASE_URL`, dan kunci privat tidak muncul di bundel klien (periksa hasil build)
-- [ ] Tinjau ulang RLS aktif di semua tabel
+- [x] Rate limiting sederhana untuk `/api/sign` dan `/api/verify` (berbasis IP, in-memory atau layanan gratis)
+- [x] Header keamanan di `next.config` (CSP yang mengizinkan kamera untuk halaman verifikasi, X-Frame-Options, Referrer-Policy)
+- [x] Pastikan tidak ada rahasia di kode/log; periksa `.gitignore`
+- [x] Pastikan galat server tidak membocorkan detail internal
+- [x] Sanitasi tampilan nama penandatangan
+- [x] Kueri DB semuanya berparameter
+- [x] Semua endpoint yang mengubah data memeriksa login + kepemilikan + `Origin` di server
+- [x] Pastikan Client Secret Google, `DATABASE_URL`, dan kunci privat tidak muncul di bundel klien (periksa hasil build)
+- [x] Tinjau ulang RLS aktif di semua tabel
 - **Uji Fase:**
-  - [ ] Unggah file non-PDF yang diganti ekstensi → ditolak
-  - [ ] File > 10 MB → ditolak
-  - [ ] Permintaan beruntun cepat → terkena batas
-  - [ ] Memanggil API sign/revoke tanpa login atau dengan akun lain → ditolak
+  - [x] Unggah file non-PDF yang diganti ekstensi → ditolak
+  - [x] File > 10 MB → ditolak
+  - [x] Permintaan beruntun cepat → terkena batas
+  - [x] Memanggil API sign/revoke tanpa login atau dengan akun lain → ditolak
 
 ## FASE 9 — Polesan & Pengujian Akhir
 - [ ] Responsif penuh (375px, 768px, 1280px+)
@@ -215,6 +215,7 @@
 | 2026-11-25 | Fase 5 | Kriptografi RSA-2048 / SHA-256: generate-keys.mjs, lib/crypto.ts (hash, sign, verify, safeEqual timing-safe), formatPemKey otomatis | Kunci .env.local berhasil diverifikasi dengan unit test tanda tangan digital |
 | 2026-11-25 | Fase 6 | Fitur Buat Tanda Tangan: lib/validate.ts, lib/pdf.ts stamping QR & metadata, api/sign terproteksi auth & CSRF, UploadBox.tsx, app/tanda-tangan/page.tsx | Pengujian end-to-end penandatanganan dan penolakan 401 unauthenticated lolos verifikasi |
 | 2026-11-25 | Fase 7 | Fitur Cek Keaslian: api/verify, api/document/[id], api/document/[id]/revoke, api/documents/my, QrScanner.tsx, ResultCard.tsx, app/verifikasi, app/riwayat | Uji dokumen asli (ASLI), dokumen dimodifikasi (DIUBAH), ID acak (TIDAK_DITEMUKAN), dan pencabutan sah/non-pemilik (DICABUT) lolos 100% |
+| 2026-11-25 | Fase 8 | Keamanan & Hardening: rate limiting in-memory per IP (lib/rate-limit.ts), HTTP Security Headers (CSP, X-Frame-Options DENY, Permissions-Policy camera, Referrer-Policy) di next.config.ts, audit RLS, penanganan error dan sanitasi | Pengujian file non-PDF, file > 10MB, rate limit per menit, proteksi origin, dan build produksi bersih tanpa kebocoran rahasia |
 
 ---
 

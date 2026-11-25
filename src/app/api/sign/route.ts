@@ -4,9 +4,30 @@ import { validatePdfBuffer, SignFormSchema } from '@/lib/validate';
 import { stampPdfWithQr, generateDocumentId } from '@/lib/pdf';
 import { sha256Hex, signHash, getSigningKeyId } from '@/lib/crypto';
 import { insertDocument } from '@/lib/db';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
   try {
+    // 0. Rate Limiting Sederhana (Maks 15 permintaan tanda tangan per menit per IP)
+    const clientIp = getClientIp(request.headers);
+    const rateLimit = checkRateLimit(clientIp, 'sign', {
+      windowMs: 60 * 1000,
+      maxRequests: 15,
+    });
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: 'Terlalu banyak permintaan tanda tangan. Silakan tunggu beberapa saat sebelum mencoba lagi.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil((rateLimit.resetTime - Date.now()) / 1000).toString(),
+          },
+        }
+      );
+    }
+
     // 1. Verifikasi Autentikasi Pengguna (Wajib Login)
     const user = await getCurrentUser();
     if (!user) {

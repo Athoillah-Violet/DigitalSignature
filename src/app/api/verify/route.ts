@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDocumentById } from '@/lib/db';
 import { sha256Hex, safeEqual, verifySignature, getPublicKey } from '@/lib/crypto';
 import { validatePdfBuffer } from '@/lib/validate';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export type VerificationStatus = 'ASLI' | 'DIUBAH' | 'TIDAK_DITEMUKAN' | 'DICABUT';
 
@@ -25,6 +26,27 @@ export interface VerificationResponse {
 
 export async function POST(request: NextRequest) {
   try {
+    // 0. Rate Limiting Sederhana (Maks 30 permintaan verifikasi per menit per IP)
+    const clientIp = getClientIp(request.headers);
+    const rateLimit = checkRateLimit(clientIp, 'verify', {
+      windowMs: 60 * 1000,
+      maxRequests: 30,
+    });
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          status: 'TIDAK_DITEMUKAN',
+          message: 'Terlalu banyak permintaan verifikasi. Silakan tunggu beberapa saat.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil((rateLimit.resetTime - Date.now()) / 1000).toString(),
+          },
+        }
+      );
+    }
+
     const formData = await request.formData();
     const idField = formData.get('id');
     const fileField = formData.get('file');
