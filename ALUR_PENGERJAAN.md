@@ -24,10 +24,10 @@
 
 ## 📍 STATUS SAAT INI
 
-- **Fase aktif:** Fase 2 — Aset Timbangan
+- **Fase aktif:** Fase 3 — Layout Global & Beranda
 - **Terakhir diperbarui:** 2026-11-25
 - **Database dipilih:** (belum dipilih: Supabase / Neon)
-- **Catatan singkat:** Fase 1 selesai, tema, font (Cormorant Garamond, Inter, JetBrains Mono), animasi dasar, AosProvider, dan utility class siap digunakan.
+- **Catatan singkat:** Fase 2 selesai, aset timbangan SVG (scale.svg & ScaleIllustration.tsx) dengan kontur kontras monokrom dan latar transparan siap diintegrasikan ke hero.
 
 ---
 
@@ -56,12 +56,12 @@
   - [x] Elemen uji dengan `data-aos` beranimasi saat di-scroll
 
 ## FASE 2 — Aset Timbangan
-- [ ] Buat `public/assets/scale.svg`: timbangan keadilan minimalis monokrom, **latar transparan**, rasio sekitar 3:4
-- [ ] Buat `components/ScaleIllustration.tsx` (SVG inline, bisa diberi `className`)
-- [ ] Pastikan warna garis/isi hitam-abu dan terlihat jelas di atas teks hitam raksasa (beri kontur atau isi abu terang agar terbaca)
+- [x] Buat `public/assets/scale.svg`: timbangan keadilan minimalis monokrom, **latar transparan**, rasio sekitar 3:4
+- [x] Buat `components/ScaleIllustration.tsx` (SVG inline, bisa diberi `className`)
+- [x] Pastikan warna garis/isi hitam-abu dan terlihat jelas di atas teks hitam raksasa (beri kontur atau isi abu terang agar terbaca)
 - **Uji Fase:**
-  - [ ] SVG tampil rapi di ukuran kecil dan besar
-  - [ ] Latar benar-benar transparan
+  - [x] SVG tampil rapi di ukuran kecil dan besar
+  - [x] Latar benar-benar transparan
 
 ## FASE 3 — Layout Global & Beranda
 - [ ] `TopBar.tsx`: bar hitam, teks kecil kiri, titik hijau berkedip + "SISTEM AKTIF" kanan
@@ -172,6 +172,7 @@
 |---|---|---|---|
 | 2026-11-25 | Fase 0 | Inisialisasi proyek Next.js 16, TypeScript, Tailwind CSS, struktur folder placeholder, pasang seluruh dependensi dan verifikasi build/dev | Build dan dev server berjalan sukses (HTTP 200) |
 | 2026-11-25 | Fase 1 | Fondasi desain: palet warna off-white, font Google (Cormorant, Inter, JetBrains Mono), utility class, keyframes (blink, float, pulse-soft), AosProvider, prefers-reduced-motion | Build dan dev test lolos, rendering HTML diverifikasi |
+| 2026-11-25 | Fase 2 | Aset timbangan keadilan minimalis monokrom (scale.svg & ScaleIllustration.tsx): rasio 3:4, latar transparan, kontur proteksi teks raksasa | SVG inline dan standalone siap, lolos uji render |
 
 ---
 

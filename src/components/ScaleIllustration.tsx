@@ -1,3 +1,200 @@
-export default function ScaleIllustration({ className }: { className?: string }) {
-  return <div className={className}>Scale</div>;
+interface ScaleIllustrationProps {
+  className?: string;
+}
+
+export default function ScaleIllustration({ className = '' }: ScaleIllustrationProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 600 800"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <defs>
+        {/* Subtle drop shadow */}
+        <filter id="comp-scale-glow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#000000" floodOpacity="0.12" />
+        </filter>
+
+        {/* Pan gradient */}
+        <linearGradient id="comp-pan-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#F7F6F2" />
+          <stop offset="50%" stopColor="#E9E8E3" />
+          <stop offset="100%" stopColor="#D6D5CF" />
+        </linearGradient>
+
+        {/* Pillar gradient */}
+        <linearGradient id="comp-pillar-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#D6D5CF" />
+          <stop offset="35%" stopColor="#FBFBF9" />
+          <stop offset="70%" stopColor="#E9E8E3" />
+          <stop offset="100%" stopColor="#C2C1BA" />
+        </linearGradient>
+      </defs>
+
+      <g filter="url(#comp-scale-glow)">
+        {/* ================= CONTOUR LAYER (LIGHT OUTER HALO) ================= */}
+        {/* Ensures sharp separation when crossing over dark text like VERITAS */}
+        <g stroke="#E9E8E3" strokeWidth="7" fill="#E9E8E3" opacity="0.95">
+          {/* Pedestal / Base */}
+          <path d="M 180 705 C 180 690, 220 680, 300 680 C 380 680, 420 690, 420 705 L 420 715 C 420 725, 380 735, 300 735 C 220 735, 180 725, 180 715 Z" />
+          <rect x="235" y="650" width="130" height="32" rx="4" />
+          <rect x="265" y="625" width="70" height="25" rx="3" />
+
+          {/* Central Pillar Column */}
+          <path d="M 292 205 L 288 625 L 312 625 L 308 205 Z" />
+          {/* Top Finial & Pivot */}
+          <circle cx="300" cy="195" r="18" />
+          <polygon points="300,120 307,150 293,150" />
+          <circle cx="300" cy="115" r="6" />
+
+          {/* Beam Crossbar */}
+          <path d="M 110 205 Q 300 180 490 205" />
+
+          {/* Left Pan Bowl & Suspension */}
+          <line x1="110" y1="205" x2="50" y2="440" />
+          <line x1="110" y1="205" x2="110" y2="445" />
+          <line x1="110" y1="205" x2="170" y2="440" />
+          <ellipse cx="110" cy="440" rx="60" ry="14" />
+          <path d="M 50 440 C 50 495, 170 495, 170 440 Z" />
+
+          {/* Right Pan Bowl & Suspension */}
+          <line x1="490" y1="205" x2="430" y2="440" />
+          <line x1="490" y1="205" x2="490" y2="445" />
+          <line x1="490" y1="205" x2="550" y2="440" />
+          <ellipse cx="490" cy="440" rx="60" ry="14" />
+          <path d="M 430 440 C 430 495, 550 495, 550 440 Z" />
+        </g>
+
+        {/* ================= MAIN MONOCHROME LINE-ART & FILLS ================= */}
+        {/* Base / Pedestal */}
+        <path
+          d="M 180 705 C 180 690, 220 680, 300 680 C 380 680, 420 690, 420 705 L 420 715 C 420 728, 380 735, 300 735 C 220 735, 180 728, 180 715 Z"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        <ellipse cx="300" cy="705" rx="120" ry="16" stroke="#111111" strokeWidth="1.5" fill="none" opacity="0.4" />
+        <rect
+          x="235"
+          y="650"
+          width="130"
+          height="32"
+          rx="4"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        <rect
+          x="265"
+          y="625"
+          width="70"
+          height="25"
+          rx="3"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+
+        {/* Central Pillar Shaft */}
+        <path
+          d="M 293 205 L 288 625 L 312 625 L 307 205 Z"
+          fill="url(#comp-pillar-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        {/* Column Fluting lines */}
+        <line x1="297" y1="225" x2="294" y2="610" stroke="#111111" strokeWidth="1" opacity="0.5" />
+        <line x1="300" y1="220" x2="300" y2="615" stroke="#111111" strokeWidth="1.2" opacity="0.7" />
+        <line x1="303" y1="225" x2="306" y2="610" stroke="#111111" strokeWidth="1" opacity="0.5" />
+
+        {/* Decorative Column Rings */}
+        <rect x="286" y="315" width="28" height="6" rx="2" fill="#E9E8E3" stroke="#111111" strokeWidth="1.5" />
+        <rect x="285" y="475" width="30" height="7" rx="2" fill="#E9E8E3" stroke="#111111" strokeWidth="1.5" />
+
+        {/* Central Pivot & Fulcrum */}
+        <circle cx="300" cy="195" r="16" fill="url(#comp-pan-gradient)" stroke="#111111" strokeWidth="2.5" />
+        <circle cx="300" cy="195" r="7" fill="#111111" />
+        <circle cx="300" cy="195" r="2.5" fill="#E9E8E3" />
+
+        {/* Vertical Indicator Needle */}
+        <polygon points="300,128 304,185 296,185" fill="#111111" />
+        <circle cx="300" cy="118" r="5" fill="#111111" />
+        <line x1="300" y1="123" x2="300" y2="128" stroke="#111111" strokeWidth="2" />
+
+        {/* Horizontal Balance Beam */}
+        <path
+          d="M 110 205 Q 300 182 490 205"
+          fill="none"
+          stroke="#111111"
+          strokeWidth="5"
+        />
+        <path
+          d="M 110 205 Q 300 186 490 205"
+          fill="none"
+          stroke="#F3F2ED"
+          strokeWidth="1.5"
+        />
+
+        {/* Beam End Pivot Rings */}
+        {/* Left Pivot */}
+        <circle cx="110" cy="205" r="7" fill="url(#comp-pan-gradient)" stroke="#111111" strokeWidth="2" />
+        <circle cx="110" cy="205" r="2" fill="#111111" />
+        {/* Right Pivot */}
+        <circle cx="490" cy="205" r="7" fill="url(#comp-pan-gradient)" stroke="#111111" strokeWidth="2" />
+        <circle cx="490" cy="205" r="2" fill="#111111" />
+
+        {/* Suspension Cords - Left */}
+        <line x1="110" y1="212" x2="52" y2="440" stroke="#111111" strokeWidth="1.5" />
+        <line x1="110" y1="212" x2="110" y2="445" stroke="#111111" strokeWidth="1.5" />
+        <line x1="110" y1="212" x2="168" y2="440" stroke="#111111" strokeWidth="1.5" />
+
+        {/* Left Scale Pan Bowl */}
+        <path
+          d="M 50 440 C 50 495, 170 495, 170 440 Z"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        {/* Left Pan Rim (Ellipse) */}
+        <ellipse
+          cx="110"
+          cy="440"
+          rx="60"
+          ry="14"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        <ellipse cx="110" cy="440" rx="52" ry="10" stroke="#111111" strokeWidth="1" fill="none" opacity="0.35" />
+
+        {/* Suspension Cords - Right */}
+        <line x1="490" y1="212" x2="432" y2="440" stroke="#111111" strokeWidth="1.5" />
+        <line x1="490" y1="212" x2="490" y2="445" stroke="#111111" strokeWidth="1.5" />
+        <line x1="490" y1="212" x2="548" y2="440" stroke="#111111" strokeWidth="1.5" />
+
+        {/* Right Scale Pan Bowl */}
+        <path
+          d="M 430 440 C 430 495, 550 495, 550 440 Z"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        {/* Right Pan Rim (Ellipse) */}
+        <ellipse
+          cx="490"
+          cy="440"
+          rx="60"
+          ry="14"
+          fill="url(#comp-pan-gradient)"
+          stroke="#111111"
+          strokeWidth="2.5"
+        />
+        <ellipse cx="490" cy="440" rx="52" ry="10" stroke="#111111" strokeWidth="1" fill="none" opacity="0.35" />
+      </g>
+    </svg>
+  );
 }
